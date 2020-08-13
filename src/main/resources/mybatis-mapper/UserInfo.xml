@@ -16,4 +16,19 @@
 			</if>
 		</where>
 	</select>
+
+	<select id="selectUserInfoByPage"
+			parameterType="com.clear.navigator.param.input.UserInfoParam"
+			resultType="com.clear.navigator.dto.UserInfoDto">
+		SELECT *
+		FROM userInfo
+		<where>
+			<if test="item.username!=null and item.username!=''">
+				username = #{item.username}
+			</if>
+			<if test="item.password!=null and item.password!=''">
+				AND password = #{item.password}
+			</if>
+		</where>
+	</select>
 </mapper>

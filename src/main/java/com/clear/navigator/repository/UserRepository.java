@@ -1,5 +1,7 @@
 package com.clear.navigator.repository;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.clear.navigator.dto.UserInfoDto;
 import com.clear.navigator.param.input.UserInfoParam;
 import org.apache.ibatis.annotations.Mapper;
@@ -25,4 +27,6 @@ public interface UserRepository {
      * @return com.baomidou.mybatisplus.core.metadata.IPage<com.clear.navigator.dto.UserInfoDto>
      **/
     List<UserInfoDto> selectUserInfo(@Param("item") UserInfoParam userInfoParam);
+
+    IPage<UserInfoDto> selectUserInfoByPage(Page<UserInfoDto> userInfoDtoPage,@Param("item") UserInfoParam userInfoParam);
 }

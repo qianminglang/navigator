@@ -1,5 +1,7 @@
 package com.clear.navigator.service.impl;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
+import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
 import com.clear.navigator.dto.UserInfoDto;
 import com.clear.navigator.param.input.UserInfoParam;
 import com.clear.navigator.repository.UserRepository;
@@ -25,5 +27,11 @@ public class UserInfoServiceImpl implements UserInfoService {
     public List<UserInfoDto> selectUserInfo(UserInfoParam userInfoParam) {
         List<UserInfoDto> userInfoDtoIPage = userRepository.selectUserInfo(userInfoParam);
         return userInfoDtoIPage;
+    }
+
+    @Override
+    public IPage<UserInfoDto> selectUserInfoByPage(UserInfoParam userInfoParam) {
+        Page<UserInfoDto> userInfoDtoPage = new Page<>(1, 3);
+        return userRepository.selectUserInfoByPage(userInfoDtoPage,userInfoParam);
     }
 }

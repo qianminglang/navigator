@@ -1,5 +1,6 @@
 package com.clear.navigator.controller;
 
+import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.clear.navigator.dto.UserInfoDto;
 import com.clear.navigator.param.input.UserInfoParam;
 import com.clear.navigator.service.UserInfoService;
@@ -27,5 +28,10 @@ public class UserInfoController {
     @RequestMapping("/select")
     public List<UserInfoDto> userSelect(@RequestBody UserInfoParam userInfoParam) {
         return userInfoService.selectUserInfo(userInfoParam);
+    }
+
+    @RequestMapping("/selectByPage")
+    public IPage<UserInfoDto> selectByPage(@RequestBody UserInfoParam userInfoParam) {
+        return userInfoService.selectUserInfoByPage(userInfoParam);
     }
 }
