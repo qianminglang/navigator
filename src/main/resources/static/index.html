@@ -1,0 +1,52 @@
+<html>
+<head>
+    <meta charset="UTF-8"></meta>
+    <title>走航车</title>
+</head>
+<body>
+<br/>
+<input id="text" type="text"/>
+<button onclick="send()">发送测试</button>
+<hr/>
+<button onclick="close()">关闭连接</button>
+<hr/>
+<div id="message"></div>
+<script>
+    var websocket = null;
+    if ('WebSocket' in window) {
+        websocket = new WebSocket("ws://localhost:8080/websocket");
+    } else {
+        alert("您的浏览器不支持websocket");
+    }
+    console.log("进来")
+    websocket.onerror = function () {
+        setMessageInHtml("send error！");
+    }
+    websocket.onopen = function () {
+        setMessageInHtml("connection success！")
+    }
+    websocket.onmessage = function (event) {
+        setMessageInHtml(event.data);
+    }
+    websocket.onclose = function () {
+        setMessageInHtml("closed websocket!")
+    }
+    window.onbeforeunload = function () {
+        close();
+    }
+
+    function setMessageInHtml(message) {
+        document.getElementById('message').innerHTML += message;
+    }
+
+    function close() {
+        websocket.close(3000, "强制关闭");
+    }
+
+    function send() {
+        var msg = document.getElementById('text').value;
+        websocket.send(msg);
+    }
+</script>
+</body>
+</html>
