@@ -2,6 +2,7 @@ package com.clear.navigator.controller;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.clear.navigator.dto.UserInfoDto;
+import com.clear.navigator.param.Response;
 import com.clear.navigator.param.input.UserInfoParam;
 import com.clear.navigator.service.UserInfoService;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,12 +27,12 @@ public class UserInfoController {
     private UserInfoService userInfoService;
 
     @RequestMapping("/select")
-    public List<UserInfoDto> userSelect(@RequestBody UserInfoParam userInfoParam) {
-        return userInfoService.selectUserInfo(userInfoParam);
+    public Response<List<UserInfoDto>> userSelect(@RequestBody UserInfoParam userInfoParam) {
+        return new Response<>(userInfoService.selectUserInfo(userInfoParam));
     }
 
     @RequestMapping("/selectByPage")
-    public IPage<UserInfoDto> selectByPage(@RequestBody UserInfoParam userInfoParam) {
-        return userInfoService.selectUserInfoByPage(userInfoParam);
+    public Response<IPage<UserInfoDto>> selectByPage(@RequestBody UserInfoParam userInfoParam) {
+        return new Response<>(userInfoService.selectUserInfoByPage(userInfoParam));
     }
 }

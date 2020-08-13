@@ -28,5 +28,13 @@ public interface UserRepository {
      **/
     List<UserInfoDto> selectUserInfo(@Param("item") UserInfoParam userInfoParam);
 
+    /**
+     * 分页查询用户信息
+     * @author 3Clear1
+     * @date 2020/8/13 16:22
+     * @param userInfoDtoPage
+     * @param userInfoParam
+     * @return com.baomidou.mybatisplus.core.metadata.IPage<com.clear.navigator.dto.UserInfoDto>
+     **/
     IPage<UserInfoDto> selectUserInfoByPage(Page<UserInfoDto> userInfoDtoPage,@Param("item") UserInfoParam userInfoParam);
 }
