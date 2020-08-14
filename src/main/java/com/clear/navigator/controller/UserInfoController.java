@@ -33,6 +33,7 @@ public class UserInfoController {
 
     @RequestMapping("/selectByPage")
     public Response<IPage<UserInfoDto>> selectByPage(@RequestBody UserInfoParam userInfoParam) {
+        userInfoParam.checkInput();
         return new Response<>(userInfoService.selectUserInfoByPage(userInfoParam));
     }
 }

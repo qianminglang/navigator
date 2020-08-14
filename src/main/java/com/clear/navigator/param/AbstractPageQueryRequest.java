@@ -15,9 +15,9 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public abstract class AbstractPageQueryRequest {
+public abstract class AbstractPageQueryRequest extends PageParam {
 
-    private PageInfo pageInfo;
+    private PageParam pageParam;
 
     /**
      * 校验参数
@@ -27,16 +27,9 @@ public abstract class AbstractPageQueryRequest {
      * @author 3Clear1
      * @date 2020/8/13 16:58
      **/
-    public void checkInPut() throws Exception {
-        ParamUtil.isNull(pageInfo.page, "分页查询页码不能为空");
-        ParamUtil.isNull(pageInfo.size, "分页查询长度不能为空");
-    }
-
-    @Data
-    @NoArgsConstructor
-    @AllArgsConstructor
-    static class PageInfo {
-        private int page;
-        private int size;
+    @Override
+    public void checkInput() {
+        ParamUtil.nonNull(this.pageParam, "分页方式不能为空");
+        this.pageParam.checkInput();
     }
 }

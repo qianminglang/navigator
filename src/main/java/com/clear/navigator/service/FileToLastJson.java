@@ -56,6 +56,7 @@ public class FileToLastJson {
             LinkedList<Float> lonLat = new LinkedList<>();
             lonLat.add((Float.valueOf(gpsInfoMap.get(time).getLon())));
             lonLat.add((Float.valueOf(gpsInfoMap.get(time).getLat())));
+            lonLat.add(0.0f);
             Date parse = DateUtil.stringToDate(time, DateUtil.YYYY_M_DD_HH_MM_SS);
             String timeFormat = DateUtil.dateToString(parse, DateUtil.YYYY_MM_DD_HH_MM_SS);
             timeFormat = timeFormat.replace("/", "").replace(":", "").replaceAll(" ", "");
@@ -67,9 +68,9 @@ public class FileToLastJson {
             valueList.add(floats);
         }
         JsonLastResult build = JsonLastResult.builder()
-                .time(timeList)
-                .lonLat(lonLatList)
-                .value(valueList)
+                .timeAry(timeList)
+                .ptAry(lonLatList)
+                .dataAry(valueList)
                 .build();
 
         Object jsonResult = JSON.toJSON(build);

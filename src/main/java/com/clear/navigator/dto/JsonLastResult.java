@@ -20,7 +20,7 @@ import java.util.List;
 @NoArgsConstructor
 @Builder
 public class JsonLastResult implements Serializable {
-    private List<Long> time;
-    private List<List<Float>> lonLat;
-    private List<List<Float>> value;
+    private List<Long> timeAry;
+    private List<List<Float>> ptAry;
+    private List<List<Float>> dataAry;
 }
