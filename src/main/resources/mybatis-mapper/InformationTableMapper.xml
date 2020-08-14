@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clear.mapper.InformationTableMapper">
+    <select id="selectUserInfoByPage"
+            parameterType="com.clear.param.input.UserInfoParam"
+            resultType="com.clear.entity.InformationTable">
+        SELECT *
+        FROM information_table
+        <where>
+            <if test="item.username!=null and item.username!=''">
+                column_1 = #{item.username}
+            </if>
+            <if test="item.password!=null and item.password!=''">
+                AND column_2 = #{item.password}
+            </if>
+        </where>
+    </select>
+
+</mapper>
