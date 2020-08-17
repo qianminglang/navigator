@@ -2,6 +2,7 @@ package com.clear.repository;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.clear.entity.SysUser;
 import com.clear.entity.UserInfoDto;
 import com.clear.param.input.UserInfoParam;
 
@@ -16,7 +17,7 @@ import java.util.List;
  **/
 
 public interface UserInfoRepository {
-    List<UserInfoDto> selectUserInfo(UserInfoDto userInfoDto);
+    List<SysUser> selectUserInfo(SysUser sysUser);
 
     IPage<UserInfoDto> selectUserInfoByPage(Page<UserInfoDto> userInfoDtoPage, UserInfoParam userInfoParam);
 }

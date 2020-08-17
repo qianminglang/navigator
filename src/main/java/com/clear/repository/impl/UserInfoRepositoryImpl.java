@@ -2,6 +2,7 @@ package com.clear.repository.impl;
 
 import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.baomidou.mybatisplus.extension.plugins.pagination.Page;
+import com.clear.entity.SysUser;
 import com.clear.entity.UserInfoDto;
 import com.clear.mapper.UserMapper;
 import com.clear.param.input.UserInfoParam;
@@ -25,8 +26,8 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
     private UserMapper userMapper;
 
     @Override
-    public List<UserInfoDto> selectUserInfo(UserInfoDto userInfoDto) {
-        return userMapper.selectUserInfo(userInfoDto);
+    public List<SysUser> selectUserInfo(SysUser sysUser) {
+        return userMapper.selectUserInfo(sysUser);
     }
 
     @Override

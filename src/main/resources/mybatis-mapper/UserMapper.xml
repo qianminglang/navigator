@@ -3,13 +3,13 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.clear.mapper.UserMapper">
     <select id="selectUserInfo"
-            parameterType="com.clear.entity.UserInfoDto"
-            resultType="com.clear.entity.UserInfoDto">
+            parameterType="com.clear.entity.SysUser"
+            resultType="com.clear.entity.SysUser">
         SELECT *
-        FROM userInfo
+        FROM sys_user
         <where>
-            <if test="item.userName!=null and item.userName!=''">
-                username = #{item.userName}
+            <if test="item.username!=null and item.username!=''">
+                username = #{item.username}
             </if>
         </where>
     </select>

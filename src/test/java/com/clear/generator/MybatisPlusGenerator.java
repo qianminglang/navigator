@@ -22,17 +22,17 @@ import java.util.List;
 
 public class MybatisPlusGenerator {
     // 数据库连接配置
-    private static final String JDBC_DRIVER = "com.mysql.cj.jdbc.Driver";
-    private static final String JDBC_URL = "jdbc:mysql://localhost:3306/test?serverTimezone=UTC";
-    private static final String JDBC_USER_NAME = "root";
-    private static final String JDBC_PASSOWRD = "";
+    private static final String JDBC_DRIVER = "org.postgresql.Driver";
+    private static final String JDBC_URL = "jdbc:postgresql://10.110.18.194:5432/pollution_monitor_vehicle";
+    private static final String JDBC_USER_NAME = "postgres";
+    private static final String JDBC_PASSOWRD = "5vUrnpE88";
 
     // 包名和模块名
     private static final String PACKAGE_NAME = "com.clear";
     private static final String MODULE_NAME = "";
 
     // 表名，多个表使用英文逗号分割
-    private static final String TBL_NAMES = "information_table";
+    private static final String TBL_NAMES = "sys_user,sail,relation_user_sta,instrument,parameter,instrumentparameters,duration,data,data_avg,data_derived,verticaldata";
 
     // 表名的前缀，从表生成代码时会去掉前缀
     private static final String TABLE_PREFIX = "";

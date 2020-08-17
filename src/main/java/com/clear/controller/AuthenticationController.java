@@ -19,7 +19,7 @@ import java.util.Map;
 
 @RestController
 @RequestMapping("/authentication")
-public class LoginController {
+public class AuthenticationController {
 
     private static final String TOKEN = "token";
 

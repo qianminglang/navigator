@@ -1,9 +1,11 @@
 package com.clear.converter.input;
 
 
-import com.clear.entity.UserInfoDto;
+import com.clear.entity.SysUser;
 import com.clear.param.input.LoginParam;
 import org.mapstruct.Mapper;
+import org.mapstruct.Mapping;
+import org.mapstruct.Mappings;
 
 /**
  * ClassName UserInfoConverter
@@ -21,5 +23,9 @@ public interface UserInfoConverter {
       * @param loginParam
      * @return com.clear.entity.UserInfoDto
      **/
-    UserInfoDto loginParam (LoginParam loginParam);
+    @Mappings({
+            @Mapping(source = "userName", target = "username"),
+            @Mapping(source = "passWord", target = "userpwd")
+    })
+    SysUser loginParam (LoginParam loginParam);
 }
