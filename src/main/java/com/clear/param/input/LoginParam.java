@@ -1,22 +1,20 @@
-package com.clear.entity;
+package com.clear.param.input;
 
 import lombok.AllArgsConstructor;
-import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * ClassName UserInfoDto
+ * ClassName UserInfoParam
  *
  * @author qml
- * Date 2020/8/13 10:02
+ * Date 2020/8/13 13:25
  * Version 1.0
  **/
 @Data
-@AllArgsConstructor
 @NoArgsConstructor
-@Builder
-public class UserInfoDto {
+@AllArgsConstructor
+public class LoginParam {
     private String userName;
     private String passWord;
 }

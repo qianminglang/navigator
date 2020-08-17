@@ -25,8 +25,8 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
     private UserMapper userMapper;
 
     @Override
-    public List<UserInfoDto> selectUserInfo(UserInfoParam userInfoParam) {
-        return userMapper.selectUserInfo(userInfoParam);
+    public List<UserInfoDto> selectUserInfo(UserInfoDto userInfoDto) {
+        return userMapper.selectUserInfo(userInfoDto);
     }
 
     @Override

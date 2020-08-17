@@ -16,31 +16,45 @@ public class Response<T> implements Serializable {
 
     private static final long serialVersionUID = 3403459610630116268L;
 
-    public static final int SUCCESS_CODE = 200;
-    public static final int FAIL_CODE = 500;
+    public static final boolean SUCCESS_STATUS = true;
+    public static final boolean FAIL_STATUS = false;
     public static final int NO_AUTHORIZATION_CODE = 100;
 
-    public static final Response<String> SUCCESS = new Response<>(null);
-    public static final Response<String> FAIL = new Response<>(FAIL_CODE, null);
-    public static final Response<String> NO_AUTHORIZATION = new Response<String>(NO_AUTHORIZATION_CODE, "未登录");
 
-    private int code;
+    public static <T> Response<T> SUCCESS(T data) {
+        Response<T> resp = new Response<>();
+        resp.success = SUCCESS_STATUS;
+        resp.data = data;
+        return resp;
+    }
+
+    public static <T> Response<T> FAIL(T data) {
+        Response<T> resp = new Response<>();
+        resp.success = FAIL_STATUS;
+        resp.data = data;
+        return resp;
+    }
+
+    private boolean success;
     private String message;
     private T data;
 
-    public Response(int code, String message, T data) {
-        this.code = code;
+    public Response(boolean success, String message, T data) {
+        this.success = success;
         this.message = message;
         this.data = data;
     }
 
-    public Response(int code, String message) {
-        this.code = code;
+    public Response(boolean success, String message) {
+        this.success = success;
         this.message = message;
     }
 
     public Response(T data) {
-        this.code = SUCCESS_CODE;
+        this.success = FAIL_STATUS;
         this.data = data;
+    }
+
+    public Response() {
     }
 }

@@ -22,6 +22,6 @@ public class ControllerAdvice {
     @ResponseBody
     public Response<String> exceptionHandler(ClearArgumentException e) {
         log.error("发生异常：{}",e.getMessage());
-        return new Response(400, e.getMessage());
+        return new Response(false, e.getMessage());
     }
 }

@@ -23,10 +23,10 @@ public interface UserMapper {
      * 查询用户信息
      * @author 3Clear1
      * @date 2020/8/13 14:56
-     * @param userInfoParam
+     * @param userInfoDto
      * @return com.baomidou.mybatisplus.core.metadata.IPage<com.clear.navigator.dto.UserInfoDto>
      **/
-    List<UserInfoDto> selectUserInfo(@Param("item") UserInfoParam userInfoParam);
+    List<UserInfoDto> selectUserInfo(@Param("item") UserInfoDto userInfoDto);
 
     /**
      * 分页查询用户信息

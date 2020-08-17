@@ -16,7 +16,7 @@ import java.util.List;
  **/
 
 public interface UserInfoRepository {
-    List<UserInfoDto> selectUserInfo(UserInfoParam userInfoParam);
+    List<UserInfoDto> selectUserInfo(UserInfoDto userInfoDto);
 
     IPage<UserInfoDto> selectUserInfoByPage(Page<UserInfoDto> userInfoDtoPage, UserInfoParam userInfoParam);
 }
