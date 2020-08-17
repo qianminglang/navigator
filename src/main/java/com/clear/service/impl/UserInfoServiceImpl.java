@@ -48,6 +48,7 @@ public class UserInfoServiceImpl implements UserInfoService {
         String password = sysUser.getUserpwd();
         //根据用户查询出来的用户匹配密码有没有正确的
         List<SysUser> sysUserList = sysUsers.stream().filter(e -> e.getUserpwd().equals(password)).collect(Collectors.toList());
+        String userid = sysUserList.get(0).getUserid();
 
         if (CollectionUtils.isEmpty(sysUserList)) {
             resultMap.put("message", "当前用户密码错误");
@@ -55,6 +56,7 @@ public class UserInfoServiceImpl implements UserInfoService {
             String token = TokenUtil.sign(loginParam);
             resultMap.put("message", "登录成功");
             resultMap.put("token", token);
+            resultMap.put("userid", userid);
         }
         return resultMap;
     }

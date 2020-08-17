@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.clear.mapper.SailMapper">
+    <select id="queryVocData" resultType="com.clear.param.output.VocInfoOut">
+
+    </select>
+
+
+    <select id="queryUserSite"
+            parameterType="com.clear.param.input.UserIdParam"
+            resultType="java.lang.String">
+        select station_code from relation_user_sta
+        <where>
+            <if test="item.userId!=null and item.userId!=''">
+                user_id= #{item.userId}
+            </if>
+        </where>
+    </select>
+
+    <select id="queryUserSiteDetail"
+            parameterType="com.clear.param.input.UserIdParam"
+            resultType="com.clear.param.output.SiteOut">
+        select
+        stationcode,
+        name,
+        statecode,
+        elevation,
+        latitude,
+        longitude,
+        utcoffset,
+        aqscode,
+        fullaqscode,
+        isactive,
+        isapproved,
+        intlcode,
+        ismobile,
+        modified,
+        picname,
+        orderid from site
+        where stationcode
+        IN
+        <foreach collection="items" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+</mapper>
