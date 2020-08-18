@@ -1,10 +1,6 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="com.clear.mapper.SailMapper">
-    <select id="queryVocData" resultType="com.clear.param.output.VocInfoOut">
-
-    </select>
-
 
     <select id="queryUserSite"
             parameterType="com.clear.param.input.UserIdParam"
@@ -42,5 +38,79 @@
         <foreach collection="items" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
+    </select>
+
+    <select id="queryInstrument" resultType="com.clear.entity.Instrument">
+        select
+        instrumentid,
+        stationcode,
+        model
+        from instrument
+        <where>
+            <if test="item.stationcode!=null and item.stationcode!=''">
+                stationcode= #{item.stationcode}
+            </if>
+            <if test="item.model!=null and item.model!=''">
+                and model= #{item.model}
+            </if>
+        </where>
+    </select>
+
+    <select id="querySailStatus" resultType="com.clear.entity.Sail">
+        select sail_id,
+        start_time,
+        start_user_id,
+        end_time,
+        end_user_id,
+        station_id
+        from sail
+        where start_time in
+        (select max(start_time) from sail where station_id in
+        <foreach collection="items" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+        group by station_id)
+        and station_id in
+        <foreach collection="items" item="item" index="index" open="(" separator="," close=")">
+            #{item}
+        </foreach>
+    </select>
+
+    <select id="queryInstrumentParameter" resultType="java.lang.Integer">
+        select
+        parameterid,
+        unit
+        from instrumentparameters
+        where instrumentid =#{instrumentid}
+        order by parameterid
+    </select>
+
+    <select id="queryVocData"
+            parameterType="com.clear.domain.VocTemp"
+            resultType="com.clear.entity.Data">
+        select parameterid,value,lst
+        from data
+        <where>
+            <if test="item.stationcode!=null and item.stationcode!=''">
+                stationcode=#{item.stationcode}
+            </if>
+            <if test="item.parameterid!=null and item.parameterid!=''">
+                and parameterid=#{item.parameterid}
+            </if>
+            <if test="item.durationid!=null and item.durationid!=''">
+                and durationid=#{item.durationid}
+            </if>
+            <if test="item.startTime!=null">
+                and lst &gt;=#{item.startTime}
+            </if>
+            <if test="item.endTime!=null">
+                and lst &lt;=#{item.endTime}
+            </if>
+            and instrumentid in
+            <foreach collection="item.instrumentids" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            order by lst
+        </where>
     </select>
 </mapper>

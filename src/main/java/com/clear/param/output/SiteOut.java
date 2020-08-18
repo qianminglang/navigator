@@ -4,6 +4,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.time.LocalDateTime;
+
 /**
  * ClassName UserInfoOut
  *
@@ -17,18 +19,25 @@ import lombok.NoArgsConstructor;
 public class SiteOut {
     private String stationcode;
     private String name;
-    private String statecode;
-    private String elevation;
-    private String latitude;
-    private String longitude;
-    private String utcoffset;
-    private String aqscode;
-    private String fullaqscode;
-    private String isactive;
-    private String isapproved;
-    private String intlcode;
-    private String ismobile;
-    private String modified;
-    private String picname;
     private String orderid;
+
+    /**
+     * 走航开始时间
+     */
+    private LocalDateTime startTime;
+
+    /**
+     * 开始操作用户id
+     */
+    private String startUserId;
+
+    /**
+     * 走航结束时间
+     */
+    private LocalDateTime endTime;
+
+    /**
+     * 结束操作用户id
+     */
+    private String endUserId;
 }

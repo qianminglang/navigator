@@ -1,6 +1,7 @@
 package com.clear.param.output;
 
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
@@ -16,6 +17,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@Builder
 public class VocInfoOut {
     private List<Long> timeAry;
     private List<List<Float>> ptAry;

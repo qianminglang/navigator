@@ -4,6 +4,7 @@ import lombok.extern.slf4j.Slf4j;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
 import java.util.Date;
 
 /**
@@ -17,6 +18,7 @@ import java.util.Date;
 public class DateUtil {
     public static final String YYYY_M_DD_HH_MM_SS = "yyyy/M/ddHH:mm:ss";
     public static final String YYYY_MM_DD_HH_MM_SS = "yyyy/MM/dd HH:mm:ss";
+    public static final String YYYYMMDDHHMMSS = "yyyyMMddHHmmss";
 
     /**
      * 字符串转Date类型
@@ -36,6 +38,17 @@ public class DateUtil {
      *  Date转字符串类型
      */
     public static String dateToString(Date date, String type) {
+        if (null == date) {
+            return "";
+        }
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat(type);
+        return simpleDateFormat.format(date);
+    }
+
+    /**
+     *  Date转字符串类型
+     */
+    public static String dateToString(LocalDateTime date, String type) {
         if (null == date) {
             return "";
         }
