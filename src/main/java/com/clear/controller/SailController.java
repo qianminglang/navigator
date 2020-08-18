@@ -6,8 +6,9 @@ import com.clear.param.input.UserIdParam;
 import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
 import com.clear.param.output.SiteOut;
+import com.clear.param.output.VocHistoryInfoOut;
 import com.clear.param.output.VocHistoryOut;
-import com.clear.param.output.VocInfoOut;
+import com.clear.param.output.VocRealTimeInfoOut;
 import com.clear.service.SailService;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.bind.annotation.*;
@@ -46,17 +47,32 @@ public class SailController {
     }
 
     /**
-     * 查询车下面的走航数据
+     * 查询车下面的实时走航数据
      *
      * @param vocParam
      * @return com.clear.param.Response<com.clear.param.output.VocInfoOut>
      * @author 3Clear1
      * @date 2020/8/17 18:45
      **/
-    @PostMapping("/queryVocData")
+    @PostMapping("/queryRealTimeVocData")
     @ResponseBody
-    public Response<VocInfoOut> queryVocData(@RequestBody VocParam vocParam) throws JsonProcessingException {
-        VocInfoOut vocInfoOut = sailService.queryVocData(vocParam);
+    public Response<VocRealTimeInfoOut> queryRealTimeVocData(@RequestBody VocParam vocParam) throws JsonProcessingException {
+        VocRealTimeInfoOut vocInfoOut = sailService.queryRealTimeVocData(vocParam);
+        return Response.SUCCESS(vocInfoOut);
+    }
+
+    /**
+     * 查询车下面的实时历史数据
+     *
+     * @param vocParam
+     * @return com.clear.param.Response<com.clear.param.output.VocInfoOut>
+     * @author 3Clear1
+     * @date 2020/8/17 18:45
+     **/
+    @PostMapping("/queryHistoryVocData")
+    @ResponseBody
+    public Response<List<VocHistoryInfoOut>> queryHistoryVocData(@RequestBody VocParam vocParam) throws JsonProcessingException {
+        List<VocHistoryInfoOut> vocInfoOut = sailService.queryHistoryVocData(vocParam);
         return Response.SUCCESS(vocInfoOut);
     }
 
@@ -74,5 +90,4 @@ public class SailController {
         List<VocHistoryOut> vocHistoryOutList = sailService.queryHistoryList(vocHistoryParam);
         return Response.SUCCESS(vocHistoryOutList);
     }
-
 }

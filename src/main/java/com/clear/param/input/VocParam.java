@@ -19,7 +19,6 @@ import java.util.Date;
 @AllArgsConstructor
 public class VocParam {
     private String stationCode;
-
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
 

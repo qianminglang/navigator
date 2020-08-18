@@ -27,4 +27,6 @@ public class VocHistoryOut {
     private String endTime;
     private String endUserId;
     private String endUserName;
+    private String stationId;
+
 }

@@ -14,8 +14,9 @@ import com.clear.param.input.UserIdParam;
 import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
 import com.clear.param.output.SiteOut;
+import com.clear.param.output.VocHistoryInfoOut;
 import com.clear.param.output.VocHistoryOut;
-import com.clear.param.output.VocInfoOut;
+import com.clear.param.output.VocRealTimeInfoOut;
 import com.clear.paramtemp.SailParamTemp;
 import com.clear.paramtemp.VocTemp;
 import com.clear.repository.UserInfoRepository;
@@ -77,7 +78,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
     }
 
     @Override
-    public VocInfoOut queryVocData(VocParam vocParam) {
+    public VocRealTimeInfoOut queryRealTimeVocData(VocParam vocParam) {
         //根据走航车编码查询voc的仪器编码，查询的是instrument表
         Instrument instrument = Instrument.builder()
                 .stationcode(vocParam.getStationCode())
@@ -156,12 +157,98 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             ptAry.add(lonLatList);
             dataAry.add(parameterValueList);
         }
-        VocInfoOut vocInfoOut = VocInfoOut.builder()
+        VocRealTimeInfoOut vocInfoOut = VocRealTimeInfoOut.builder()
                 .timeAry(timeAry)
                 .ptAry(ptAry)
                 .dataAry(dataAry)
                 .build();
         return vocInfoOut;
+    }
+
+    @Override
+    public List<VocHistoryInfoOut> queryHistoryVocData(VocParam vocParam) {
+        //根据走航车编码查询voc的仪器编码，查询的是instrument表
+        Instrument instrument = Instrument.builder()
+                .stationcode(vocParam.getStationCode())
+                .model(Constants.VOC)
+                .build();
+        List<Instrument> instrumentS = vocRepository.queryInstrument(instrument);
+
+        VocTemp vocTemp = sailInfoConverter.vocParamConvert(vocParam);
+        if (CollectionUtils.isEmpty(instrumentS)) {
+            throw new ClearArgumentException("导航车查询的设备为空");
+        }
+        //只取了第一个的仪器id和频率id
+        //此处取出的是voc的仪器id
+        Integer instrumentid = instrumentS.get(0).getInstrumentid();
+
+        //根据仪器仪器编码去查询因子id,查询的是instrumentparameters表
+        List<Integer> parameters = vocRepository.queryInstrumentParameter(instrumentid);
+
+
+        Integer durationid = instrumentS.get(0).getDurationid();
+        ArrayList<Integer> instrumentids = new ArrayList<>();
+
+        //查询因子数据既要查询voc，也要查询gps（经纬度）
+        instrumentids.add(instrumentid);
+        instrumentids.add(Constants.INTEGER_5);
+        vocTemp.setInstrumentids(instrumentids);
+        vocTemp.setDurationid(durationid);
+        List<Data> dataList = vocRepository.queryVocData(vocTemp);
+
+        //初始化结果
+        List<LocalDateTime> lsAry = new LinkedList<>();
+
+
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
+        for (Data data : dataList) {
+            LocalDateTime lst = data.getLst();
+            lsAry.add(lst);
+        }
+        //时间去重
+        lsAry = lsAry.stream().distinct().collect(Collectors.toList());
+        List<Long> timeAry = new LinkedList<>();
+        for (LocalDateTime localDateTime : lsAry) {
+            timeAry.add(Long.valueOf(dateTimeFormatter.format(localDateTime)));
+        }
+        Map<LocalDateTime, List<Data>> dateTimeListMap = dataList.stream().collect(Collectors.groupingBy(Data::getLst));
+        LinkedList<VocHistoryInfoOut> resultList = new LinkedList<>();
+        for (LocalDateTime ls : lsAry) {
+            VocHistoryInfoOut vocHistoryInfoOut = new VocHistoryInfoOut();
+            List<Data> groupData = dateTimeListMap.get(ls);
+            LinkedList<Float> lonLatList = new LinkedList<>();
+            LinkedList<Float> parameterValueList = new LinkedList<>();
+            Long aLong = Long.valueOf(dateTimeFormatter.format(ls));
+            for (Data data : groupData) {
+                //31表示经度
+                if (Constants.INTEGER_31.equals(data.getParameterid())) {
+                    lonLatList.add(data.getValue().floatValue());
+                }
+                //32表示纬度
+                if (Constants.INTEGER_32.equals(data.getParameterid())) {
+                    lonLatList.add(data.getValue().floatValue());
+                }
+
+                boolean flag = false;
+                for (Integer parameter : parameters) {
+                    if (parameter.equals(data.getParameterid())) {
+                        parameterValueList.add(data.getValue().floatValue());
+                        flag = true;
+                        break;
+                    }
+                }
+                if (!flag) {
+                    parameterValueList.add(-999f);
+                }
+
+            }
+            lonLatList.add(0f);
+            vocHistoryInfoOut.setTime(aLong);
+            vocHistoryInfoOut.setDataAry(parameterValueList);
+            vocHistoryInfoOut.setPt(lonLatList);
+            resultList.add(vocHistoryInfoOut);
+        }
+        return resultList;
     }
 
     @Override
@@ -189,16 +276,16 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         List<String> endUserIds = vocHistoryOutList.stream().map(VocHistoryOut::getEndUserId).collect(Collectors.toList());
         startUserIds.addAll(endUserIds);
         startUserIds.stream().distinct().collect(Collectors.toList());
-        
+
         List<SysUser> sysUsers = userInfoRepository.selectUserInfoUserIds(startUserIds);
         Map<String, SysUser> sysUserMap = sysUsers.stream().collect(Collectors.toMap(SysUser::getUserid, e -> e, (oldValue, newValue) -> newValue));
         for (VocHistoryOut vocHistoryOut : vocHistoryOutList) {
             SysUser startUser = sysUserMap.get(vocHistoryOut.getStartUserId());
-            if(Objects.nonNull(startUser)){
+            if (Objects.nonNull(startUser)) {
                 vocHistoryOut.setStartUserName(startUser.getUsername());
             }
             SysUser endUser = sysUserMap.get(vocHistoryOut.getStartUserId());
-            if(Objects.nonNull(endUser)){
+            if (Objects.nonNull(endUser)) {
                 vocHistoryOut.setEndUserName(endUser.getUsername());
             }
         }

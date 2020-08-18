@@ -6,8 +6,9 @@ import com.clear.param.input.UserIdParam;
 import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
 import com.clear.param.output.SiteOut;
+import com.clear.param.output.VocHistoryInfoOut;
 import com.clear.param.output.VocHistoryOut;
-import com.clear.param.output.VocInfoOut;
+import com.clear.param.output.VocRealTimeInfoOut;
 
 import java.util.List;
 
@@ -30,13 +31,22 @@ public interface SailService extends IService<Sail> {
     List<SiteOut> queryUserSite(UserIdParam userIdParam);
 
     /**
-     * 查询voc数据
+     * 查询voc实时数据
      * @author 3Clear1
      * @date 2020/8/17 18:35
      * @param vocParam
      * @return com.clear.param.output.VocInfoOut
      **/
-    VocInfoOut queryVocData(VocParam vocParam);
+    VocRealTimeInfoOut queryRealTimeVocData(VocParam vocParam);
+
+    /**
+     *查询voc历史数据
+     * @author 3Clear1
+     * @date 2020/8/18 16:56
+      * @param vocParam
+     * @return com.clear.param.output.VocInfoOut
+     **/
+    List<VocHistoryInfoOut> queryHistoryVocData(VocParam vocParam);
 
     /**
      * 查询voc历史走航列表
