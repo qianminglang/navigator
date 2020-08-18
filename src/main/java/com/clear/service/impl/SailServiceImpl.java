@@ -178,8 +178,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 siteOut.setSailing(sailing);
                 siteOut.setEquAry(Arrays.asList(equ));
                 siteOut.setVedioInfo("vedioInfo");
-                siteOut.setModelOffset("./GroundVehicle.glb");
-                siteOut.setModelUrl("0");
+                siteOut.setModelOffset("0");
+                siteOut.setModelUrl("./GroundVehicle.glb");
                 siteOut.setFreSecd("1");
             }
         }
@@ -214,36 +214,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             LinkedList<Float> lonLatList = new LinkedList<>();
             LinkedList<Float> parameterValueList = new LinkedList<>();
             List<Data> groupData = dateTimeListMap.get(ls);
-            for (Data data : groupData) {
-                Integer parameterid = data.getParameterid();
-                if (!staticMap.containsKey(parameterid.toString())) {
-                    break;
-                }
-
-                //31表示经度
-                if (Constants.INTEGER_31.equals(data.getParameterid())) {
-                    lonLatList.add(data.getValue().floatValue());
-                    break;
-                }
-                //32表示纬度
-                if (Constants.INTEGER_32.equals(data.getParameterid())) {
-                    lonLatList.add(data.getValue().floatValue());
-                    break;
-                }
-
-                boolean flag = false;
-                for (Integer parameter : parameters) {
-                    if (parameter.equals(data.getParameterid())) {
-                        parameterValueList.add(data.getValue().floatValue());
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag) {
-                    parameterValueList.add(-999f);
-                }
-
-            }
+            getParameterResult(parameters, groupData, lonLatList, parameterValueList);
             lonLatList.add(0f);
             ptAry.add(lonLatList);
             dataAry.add(parameterValueList);
@@ -283,33 +254,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             LinkedList<Float> lonLatList = new LinkedList<>();
             LinkedList<Float> parameterValueList = new LinkedList<>();
             Long aLong = Long.valueOf(dateTimeFormatter.format(ls));
-            for (Data data : groupData) {
-                Integer parameterid = data.getParameterid();
-                if (!staticMap.containsKey(parameterid.toString())) {
-                    break;
-                }
-                //31表示经度
-                if (Constants.INTEGER_31.equals(data.getParameterid())) {
-                    lonLatList.add(data.getValue().floatValue());
-                }
-                //32表示纬度
-                if (Constants.INTEGER_32.equals(data.getParameterid())) {
-                    lonLatList.add(data.getValue().floatValue());
-                }
-
-                boolean flag = false;
-                for (Integer parameter : parameters) {
-                    if (parameter.equals(data.getParameterid())) {
-                        parameterValueList.add(data.getValue().floatValue());
-                        flag = true;
-                        break;
-                    }
-                }
-                if (!flag) {
-                    parameterValueList.add(-999f);
-                }
-
-            }
+            getParameterResult(parameters, groupData, lonLatList, parameterValueList);
             lonLatList.add(0f);
             vocHistoryInfoOut.setTime(aLong);
             vocHistoryInfoOut.setDataAry(parameterValueList);
@@ -317,6 +262,42 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             resultList.add(vocHistoryInfoOut);
         }
         return resultList;
+    }
+
+    private void getParameterResult(List<Integer> parameters, List<Data> groupData, LinkedList<Float> lonLatList, LinkedList<Float> parameterValueList) {
+        groupData.sort(Comparator.comparing(Data::getParameterid));
+        for (Data data : groupData) {
+            Integer parameterid = data.getParameterid();
+            if (!staticMap.containsKey(parameterid.toString())) {
+                break;
+            }
+            //31表示经度
+            if (Constants.INTEGER_31.equals(data.getParameterid())) {
+                lonLatList.add(data.getValue().floatValue());
+            }
+            //32表示纬度
+            if (Constants.INTEGER_32.equals(data.getParameterid())) {
+                lonLatList.add(data.getValue().floatValue());
+            }
+
+            boolean trueLon = parameterid.equals(Constants.INTEGER_31);
+            boolean trueLat = parameterid.equals(Constants.INTEGER_32);
+            if (trueLon || trueLat) {
+                continue;
+            }
+            boolean flag = false;
+            for (Integer parameter : parameters) {
+                if (parameter.equals(data.getParameterid())) {
+                    parameterValueList.add(data.getValue().floatValue());
+                    flag = true;
+                    break;
+                }
+            }
+            if (!flag) {
+                parameterValueList.add(-999f);
+            }
+
+        }
     }
 
     @Override
