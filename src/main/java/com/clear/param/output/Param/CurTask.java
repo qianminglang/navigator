@@ -1,32 +1,29 @@
-package com.clear.param.output;
+package com.clear.param.output.Param;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
+import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
+import java.time.LocalDateTime;
 
 /**
- * ClassName UserInfoOut
+ * ClassName CurTask
  *
  * @author qml
- * Date 2020/8/13 13:33
+ * Date 2020/8/18 18:47
  * Version 1.0
  **/
+
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VocHistoryOut {
-    private Long taskId;
+@Builder
+public class CurTask {
+    private Long id;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private Date timeS;
-    private String startUserId;
-    private String startUserName;
+    private LocalDateTime timeS;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private String timeE;
-    private String endUserId;
-    private String endUserName;
-    private String busID;
-
+    private LocalDateTime timeE;
 }

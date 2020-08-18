@@ -1,11 +1,14 @@
 package com.clear.param.output;
 
+import com.clear.param.output.Param.CurTask;
+import com.clear.param.output.Param.Equ;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ClassName UserInfoOut
@@ -18,9 +21,13 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 public class SiteOut {
-    private String stationcode;
+    private String id;
     private String name;
     private String orderid;
+
+    //是否在走航中，1表示在走航中，0表示停止
+    private Integer sailing;
+
 
     /**
      * 走航开始时间
@@ -43,4 +50,9 @@ public class SiteOut {
      * 结束操作用户id
      */
     private String endUserId;
+
+    private CurTask curTask;
+
+    private List<Equ> equAry;
+
 }

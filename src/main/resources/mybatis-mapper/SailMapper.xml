@@ -17,7 +17,7 @@
             parameterType="com.clear.param.input.UserIdParam"
             resultType="com.clear.param.output.SiteOut">
         select
-        stationcode,
+        stationcode as id,
         name,
         statecode,
         elevation,
@@ -89,12 +89,12 @@
             parameterType="com.clear.paramtemp.SailParamTemp"
             resultType="com.clear.param.output.VocHistoryOut">
         select
-        sail_id,
-        start_time,
+        sail_id as taskID,
+        start_time as timeS,
         start_user_id,
-        end_time,
+        end_time as timeE,
         end_user_id,
-        station_id
+        station_id as busID
         from sail
         <where>
             <if test="item.startTime!=null">

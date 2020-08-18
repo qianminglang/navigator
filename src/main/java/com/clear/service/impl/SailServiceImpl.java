@@ -13,6 +13,9 @@ import com.clear.mapper.SailMapper;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
+import com.clear.param.output.Param.CurTask;
+import com.clear.param.output.Param.Equ;
+import com.clear.param.output.Param.Item;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryInfoOut;
 import com.clear.param.output.VocHistoryOut;
@@ -40,6 +43,81 @@ import java.util.stream.Collectors;
  */
 @Service
 public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements SailService {
+    private static final Map staticMap = new LinkedHashMap();
+    private static final Map EnStaticMap = new LinkedHashMap();
+
+    static {
+        staticMap.put("31", "经度");
+        staticMap.put("32", "纬度");
+        staticMap.put("35", "硝基苯");
+        staticMap.put("41", "1,2,4-三甲苯");
+        staticMap.put("44", "茚");
+        staticMap.put("47", "萘");
+        staticMap.put("52", "硝基甲苯");
+        staticMap.put("56", "α-蒎烯");
+        staticMap.put("61", "2-丁酮");
+        staticMap.put("64", "异戊二烯");
+        staticMap.put("72", "二甲基硫");
+        staticMap.put("75", "乙醛");
+        staticMap.put("76", "乙腈");
+        staticMap.put("83", "苯");
+        staticMap.put("87", "丙酮");
+        staticMap.put("88", "甲醇");
+        staticMap.put("94", "乙醇");
+        staticMap.put("123", "甲醛");
+        staticMap.put("124", "3-糠醛");
+        staticMap.put("163", "吡啶");
+        staticMap.put("174", "苯酚");
+        staticMap.put("176", "甲苯");
+        staticMap.put("178", "二甲苯");
+        staticMap.put("186", "丙烯腈");
+        staticMap.put("188", "丙烯醛");
+        staticMap.put("197", "苯甲腈");
+        staticMap.put("198", "苯乙烯");
+        staticMap.put("203", "氯苯");
+        staticMap.put("204", "4-甲基-2-戊酮");
+        staticMap.put("205", "乙酸乙酯");
+        staticMap.put("206", "N,N-二甲基甲酰胺");
+        staticMap.put("207", "异丙醇");
+        staticMap.put("208", "丙炔腈");
+
+
+        EnStaticMap.put("31", "经度");
+        EnStaticMap.put("32", "纬度");
+        EnStaticMap.put("35", "XJB");
+        EnStaticMap.put("41", "SJB");
+        EnStaticMap.put("44", "YIN");
+        EnStaticMap.put("47", "NAI");
+        EnStaticMap.put("52", "XJJB");
+        EnStaticMap.put("56", "PX");
+        EnStaticMap.put("61", "DT");
+        EnStaticMap.put("64", "YWEX");
+        EnStaticMap.put("72", "EJJL");
+        EnStaticMap.put("75", "YQUAN");
+        EnStaticMap.put("76", "YQ");
+        EnStaticMap.put("83", "BEN");
+        EnStaticMap.put("87", "BT");
+        EnStaticMap.put("88", "JC");
+        EnStaticMap.put("94", "YCH");
+        EnStaticMap.put("123", "JQ");
+        EnStaticMap.put("124", "TQ");
+        EnStaticMap.put("163", "CD");
+        EnStaticMap.put("174", "BF");
+        EnStaticMap.put("176", "JBEN");
+        EnStaticMap.put("178", "EJB");
+        EnStaticMap.put("186", "BXQ");
+        EnStaticMap.put("188", "BXQQ");
+        EnStaticMap.put("197", "BJQ");
+        EnStaticMap.put("198", "BYX");
+        EnStaticMap.put("203", "LB");
+        EnStaticMap.put("204", "JJ_WT");
+        EnStaticMap.put("205", "YSYZ");
+        EnStaticMap.put("206", "EJJJXA");
+        EnStaticMap.put("207", "YBC");
+        EnStaticMap.put("208", "BQQ");
+
+
+    }
 
     @Resource
     private SailInfoConverter sailInfoConverter;
@@ -62,16 +140,43 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         if (CollectionUtils.isEmpty(siteOuts)) {
             return Collections.emptyList();
         }
+
+
+        LinkedList<Item> items = new LinkedList<>();
+        //模拟数据局
+        EnStaticMap.forEach((key, value) -> {
+            if (key.equals(Constants.INTEGER_31.toString()) || key.equals(Constants.INTEGER_32.toString())) {
+                return;
+            }
+            Item item = Item.builder().id(value.toString()).show(1).build();
+            items.add(item);
+        });
+        Equ equ = Equ.builder().equID("VOS").itemAry(items).build();
+
         //查询走航车的状态，取每个走航车最新的状态
         List<Sail> siteStatus = vocRepository.querySailStatus(stationCodeS);
         if (CollectionUtils.isNotEmpty(siteStatus)) {
-            Map<String, Sail> sailMap = siteStatus.stream().collect(Collectors.toMap(Sail::getStationId, item -> item, (oldValue, newValue) -> newValue));
+            Map<String, Sail> sailMap = siteStatus.stream().collect(Collectors.toMap(Sail::getStationId, e -> e, (oldValue, newValue) -> newValue));
             for (SiteOut siteOut : siteOuts) {
-                Sail sail = sailMap.get(siteOut.getStationcode());
+                Sail sail = sailMap.get(siteOut.getId());
                 siteOut.setStartTime(sail.getStartTime());
                 siteOut.setEndTime(sail.getEndTime());
                 siteOut.setEndUserId(sail.getEndUserId());
                 siteOut.setStartUserId(sail.getStartUserId());
+                LocalDateTime endTime = sail.getEndTime();
+                Integer sailing = 1;
+                if (Objects.isNull(endTime)) {
+                    endTime = LocalDateTime.now();
+                    sailing = 0;
+                }
+                CurTask curTask = CurTask.builder()
+                        .timeS(sail.getStartTime())
+                        .timeE(endTime)
+                        .id(sail.getSailId())
+                        .build();
+                siteOut.setCurTask(curTask);
+                siteOut.setSailing(sailing);
+                siteOut.setEquAry(Arrays.asList(equ));
             }
         }
         return siteOuts;
@@ -131,6 +236,11 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             LinkedList<Float> parameterValueList = new LinkedList<>();
             List<Data> groupData = dateTimeListMap.get(ls);
             for (Data data : groupData) {
+                Integer parameterid = data.getParameterid();
+                if (!staticMap.containsKey(parameterid.toString())) {
+                    break;
+                }
+
                 //31表示经度
                 if (Constants.INTEGER_31.equals(data.getParameterid())) {
                     lonLatList.add(data.getValue().floatValue());
@@ -220,6 +330,10 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             LinkedList<Float> parameterValueList = new LinkedList<>();
             Long aLong = Long.valueOf(dateTimeFormatter.format(ls));
             for (Data data : groupData) {
+                Integer parameterid = data.getParameterid();
+                if (!staticMap.containsKey(parameterid.toString())) {
+                    break;
+                }
                 //31表示经度
                 if (Constants.INTEGER_31.equals(data.getParameterid())) {
                     lonLatList.add(data.getValue().floatValue());
