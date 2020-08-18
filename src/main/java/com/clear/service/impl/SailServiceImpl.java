@@ -151,7 +151,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             Item item = Item.builder().id(value.toString()).show(1).build();
             items.add(item);
         });
-        Equ equ = Equ.builder().equID("VOS").itemAry(items).build();
+        Equ equ = Equ.builder().equID("VOC").itemAry(items).build();
 
         //查询走航车的状态，取每个走航车最新的状态
         List<Sail> siteStatus = vocRepository.querySailStatus(stationCodeS);
@@ -177,6 +177,10 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 siteOut.setCurTask(curTask);
                 siteOut.setSailing(sailing);
                 siteOut.setEquAry(Arrays.asList(equ));
+                siteOut.setVedioInfo("vedioInfo");
+                siteOut.setModelOffset("./GroundVehicle.glb");
+                siteOut.setModelUrl("0");
+                siteOut.setFreSecd("1");
             }
         }
         return siteOuts;
@@ -184,34 +188,9 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 
     @Override
     public VocRealTimeInfoOut queryRealTimeVocData(VocParam vocParam) {
-        //根据走航车编码查询voc的仪器编码，查询的是instrument表
-        Instrument instrument = Instrument.builder()
-                .stationcode(vocParam.getStationCode())
-                .model(Constants.VOC)
-                .build();
-        List<Instrument> instrumentS = vocRepository.queryInstrument(instrument);
-
-        VocTemp vocTemp = sailInfoConverter.vocParamConvert(vocParam);
-        if (CollectionUtils.isEmpty(instrumentS)) {
-            throw new ClearArgumentException("导航车查询的设备为空");
-        }
-        //只取了第一个的仪器id和频率id
-        //此处取出的是voc的仪器id
-        Integer instrumentid = instrumentS.get(0).getInstrumentid();
-
-        //根据仪器仪器编码去查询因子id,查询的是instrumentparameters表
-        List<Integer> parameters = vocRepository.queryInstrumentParameter(instrumentid);
-
-
-        Integer durationid = instrumentS.get(0).getDurationid();
-        ArrayList<Integer> instrumentids = new ArrayList<>();
-
-        //查询因子数据既要查询voc，也要查询gps（经纬度）
-        instrumentids.add(instrumentid);
-        instrumentids.add(Constants.INTEGER_5);
-        vocTemp.setInstrumentids(instrumentids);
-        vocTemp.setDurationid(durationid);
-        List<Data> dataList = vocRepository.queryVocData(vocTemp);
+        VocBaseInfo vocBaseInfo = new VocBaseInfo(vocParam).invoke();
+        List<Integer> parameters = vocBaseInfo.getParameters();
+        List<Data> dataList = vocBaseInfo.getDataList();
 
         //初始化结果
         List<LocalDateTime> lsAry = new LinkedList<>();
@@ -244,10 +223,12 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 //31表示经度
                 if (Constants.INTEGER_31.equals(data.getParameterid())) {
                     lonLatList.add(data.getValue().floatValue());
+                    break;
                 }
                 //32表示纬度
                 if (Constants.INTEGER_32.equals(data.getParameterid())) {
                     lonLatList.add(data.getValue().floatValue());
+                    break;
                 }
 
                 boolean flag = false;
@@ -277,39 +258,12 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 
     @Override
     public List<VocHistoryInfoOut> queryHistoryVocData(VocParam vocParam) {
-        //根据走航车编码查询voc的仪器编码，查询的是instrument表
-        Instrument instrument = Instrument.builder()
-                .stationcode(vocParam.getStationCode())
-                .model(Constants.VOC)
-                .build();
-        List<Instrument> instrumentS = vocRepository.queryInstrument(instrument);
-
-        VocTemp vocTemp = sailInfoConverter.vocParamConvert(vocParam);
-        if (CollectionUtils.isEmpty(instrumentS)) {
-            throw new ClearArgumentException("导航车查询的设备为空");
-        }
-        //只取了第一个的仪器id和频率id
-        //此处取出的是voc的仪器id
-        Integer instrumentid = instrumentS.get(0).getInstrumentid();
-
-        //根据仪器仪器编码去查询因子id,查询的是instrumentparameters表
-        List<Integer> parameters = vocRepository.queryInstrumentParameter(instrumentid);
-
-
-        Integer durationid = instrumentS.get(0).getDurationid();
-        ArrayList<Integer> instrumentids = new ArrayList<>();
-
-        //查询因子数据既要查询voc，也要查询gps（经纬度）
-        instrumentids.add(instrumentid);
-        instrumentids.add(Constants.INTEGER_5);
-        vocTemp.setInstrumentids(instrumentids);
-        vocTemp.setDurationid(durationid);
-        List<Data> dataList = vocRepository.queryVocData(vocTemp);
+        VocBaseInfo vocBaseInfo = new VocBaseInfo(vocParam).invoke();
+        List<Integer> parameters = vocBaseInfo.getParameters();
+        List<Data> dataList = vocBaseInfo.getDataList();
 
         //初始化结果
         List<LocalDateTime> lsAry = new LinkedList<>();
-
-
         DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("yyyyMMddHHmmss");
         for (Data data : dataList) {
             LocalDateTime lst = data.getLst();
@@ -404,5 +358,55 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             }
         }
         return vocHistoryOutList;
+    }
+
+    private class VocBaseInfo {
+        private VocParam vocParam;
+        private List<Integer> parameters;
+        private List<Data> dataList;
+
+        public VocBaseInfo(VocParam vocParam) {
+            this.vocParam = vocParam;
+        }
+
+        public List<Integer> getParameters() {
+            return parameters;
+        }
+
+        public List<Data> getDataList() {
+            return dataList;
+        }
+
+        public VocBaseInfo invoke() {
+            //根据走航车编码查询voc的仪器编码，查询的是instrument表
+            Instrument instrument = Instrument.builder()
+                    .stationcode(vocParam.getStationCode())
+                    .model(Constants.VOC)
+                    .build();
+            List<Instrument> instrumentS = vocRepository.queryInstrument(instrument);
+
+            VocTemp vocTemp = sailInfoConverter.vocParamConvert(vocParam);
+            if (CollectionUtils.isEmpty(instrumentS)) {
+                throw new ClearArgumentException("导航车查询的设备为空");
+            }
+            //只取了第一个的仪器id和频率id
+            //此处取出的是voc的仪器id
+            Integer instrumentid = instrumentS.get(0).getInstrumentid();
+
+            //根据仪器仪器编码去查询因子id,查询的是instrumentparameters表
+            parameters = vocRepository.queryInstrumentParameter(instrumentid);
+
+
+            Integer durationid = instrumentS.get(0).getDurationid();
+            ArrayList<Integer> instrumentids = new ArrayList<>();
+
+            //查询因子数据既要查询voc，也要查询gps（经纬度）
+            instrumentids.add(instrumentid);
+            instrumentids.add(Constants.INTEGER_5);
+            vocTemp.setInstrumentids(instrumentids);
+            vocTemp.setDurationid(durationid);
+            dataList = vocRepository.queryVocData(vocTemp);
+            return this;
+        }
     }
 }

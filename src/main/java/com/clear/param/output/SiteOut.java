@@ -24,6 +24,10 @@ public class SiteOut {
     private String id;
     private String name;
     private String orderid;
+    private String vedioInfo;
+    private String modelUrl;
+    private String modelOffset;
+    private String freSecd;
 
     //是否在走航中，1表示在走航中，0表示停止
     private Integer sailing;
