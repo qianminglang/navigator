@@ -25,4 +25,9 @@ public class UserInfoRepositoryImpl implements UserInfoRepository {
     public List<SysUser> selectUserInfo(SysUser sysUser) {
         return userMapper.selectUserInfo(sysUser);
     }
+
+    @Override
+    public List<SysUser> selectUserInfoUserIds(List<String> userIds) {
+        return userMapper.selectUserInfoUserIds(userIds);
+    }
 }

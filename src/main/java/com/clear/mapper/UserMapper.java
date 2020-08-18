@@ -38,4 +38,13 @@ public interface UserMapper {
      * @return com.baomidou.mybatisplus.core.metadata.IPage<com.clear.navigator.dto.UserInfoDto>
      **/
     IPage<UserInfoDto> selectUserInfoByPage(Page<UserInfoDto> userInfoDtoPage,@Param("item") UserInfoParam userInfoParam);
+
+    /**
+     * 根据用户id查询用户信息
+     * @author 3Clear1
+     * @date 2020/8/13 14:56
+     * @param userids
+     * @return com.baomidou.mybatisplus.core.metadata.IPage<com.clear.navigator.dto.UserInfoDto>
+     **/
+    List<SysUser> selectUserInfoUserIds(@Param("items") List<String> userids);
 }

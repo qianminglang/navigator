@@ -1,7 +1,7 @@
 package com.clear.converter.input;
 
 
-import com.clear.domain.VocTemp;
+import com.clear.paramtemp.VocTemp;
 import com.clear.param.input.VocParam;
 import org.mapstruct.Mapper;
 import org.mapstruct.Mapping;

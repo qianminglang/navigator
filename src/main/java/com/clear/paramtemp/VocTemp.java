@@ -1,4 +1,4 @@
-package com.clear.domain;
+package com.clear.paramtemp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

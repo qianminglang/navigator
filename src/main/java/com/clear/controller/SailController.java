@@ -3,8 +3,10 @@ package com.clear.controller;
 
 import com.clear.param.Response;
 import com.clear.param.input.UserIdParam;
+import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
 import com.clear.param.output.SiteOut;
+import com.clear.param.output.VocHistoryOut;
 import com.clear.param.output.VocInfoOut;
 import com.clear.service.SailService;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -15,7 +17,7 @@ import java.util.List;
 
 /**
  * <p>
- *  前端控制器
+ * 前端控制器
  * </p>
  *
  * @author mybatis-plus generator
@@ -30,30 +32,47 @@ public class SailController {
 
     /**
      * 查询用户名下有哪些车
+     *
+     * @param userIdParam
+     * @return com.clear.param.Response<com.clear.param.output.VocInfoOut>
      * @author 3Clear1
      * @date 2020/8/17 18:44
-      * @param userIdParam
-     * @return com.clear.param.Response<com.clear.param.output.VocInfoOut>
      **/
     @PostMapping("/userSite")
     @ResponseBody
     public Response<List<SiteOut>> queryUserSite(@RequestBody UserIdParam userIdParam) throws JsonProcessingException {
         List<SiteOut> siteOutList = sailService.queryUserSite(userIdParam);
-        return new Response<>(siteOutList);
+        return Response.SUCCESS(siteOutList);
     }
 
     /**
      * 查询车下面的走航数据
+     *
+     * @param vocParam
+     * @return com.clear.param.Response<com.clear.param.output.VocInfoOut>
      * @author 3Clear1
      * @date 2020/8/17 18:45
-      * @param vocParam
-     * @return com.clear.param.Response<com.clear.param.output.VocInfoOut>
      **/
     @PostMapping("/queryVocData")
     @ResponseBody
     public Response<VocInfoOut> queryVocData(@RequestBody VocParam vocParam) throws JsonProcessingException {
         VocInfoOut vocInfoOut = sailService.queryVocData(vocParam);
-        return  Response.SUCCESS(vocInfoOut);
+        return Response.SUCCESS(vocInfoOut);
+    }
+
+
+    /**
+     * 查询voc历史走航列表
+     * @author 3Clear1
+     * @date 2020/8/18 14:31
+      * @param vocHistoryParam
+     * @return com.clear.param.Response<java.util.List<com.clear.param.output.VocHistoryOut>>
+     **/
+    @PostMapping("/queryHistoryList")
+    @ResponseBody
+    public Response<List<VocHistoryOut>> queryHistoryList(@RequestBody VocHistoryParam vocHistoryParam) throws JsonProcessingException {
+        List<VocHistoryOut> vocHistoryOutList = sailService.queryHistoryList(vocHistoryParam);
+        return Response.SUCCESS(vocHistoryOutList);
     }
 
 }

@@ -85,8 +85,34 @@
         order by parameterid
     </select>
 
+    <select id="queryHistoryList"
+            parameterType="com.clear.paramtemp.SailParamTemp"
+            resultType="com.clear.param.output.VocHistoryOut">
+        select
+        sail_id,
+        start_time,
+        start_user_id,
+        end_time,
+        end_user_id,
+        station_id
+        from sail
+        <where>
+            <if test="item.startTime!=null">
+                start_time &gt;=#{item.startTime}
+            </if>
+            <if test="item.startTime!=null">
+                and end_time &lt;=#{item.endTime}
+            </if>
+            and station_id in
+            <foreach collection="item.stationCodeS" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            order by start_time desc
+        </where>
+    </select>
+
     <select id="queryVocData"
-            parameterType="com.clear.domain.VocTemp"
+            parameterType="com.clear.paramtemp.VocTemp"
             resultType="com.clear.entity.Data">
         select parameterid,value,lst
         from data

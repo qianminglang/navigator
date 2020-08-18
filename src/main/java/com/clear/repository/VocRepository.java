@@ -1,10 +1,13 @@
 package com.clear.repository;
 
-import com.clear.domain.VocTemp;
+import com.clear.paramtemp.SailParamTemp;
+import com.clear.paramtemp.VocTemp;
 import com.clear.entity.Data;
 import com.clear.entity.Instrument;
+import com.clear.entity.Sail;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
+import com.clear.param.output.VocHistoryOut;
 
 import java.util.List;
 
@@ -26,7 +29,25 @@ public interface VocRepository {
      * @author 3Clear1
      * @date 2020/8/17 18:53
      **/
-    List<SiteOut> queryUserSite(UserIdParam userIdParam);
+    List<String> queryUserSite(UserIdParam userIdParam);
+
+    /**
+     * 查询走航车的详细信息
+     * @author 3Clear1
+     * @date 2020/8/18 14:42
+      * @param stationCodeS
+     * @return java.util.List<com.clear.param.output.SiteOut>
+     **/
+    List<SiteOut> queryUserSiteDetail(List<String> stationCodeS);
+
+    /**
+     * 查询走航车状态
+     * @author 3Clear1
+     * @date 2020/8/18 14:47
+      * @param stationCodeS
+     * @return java.util.List<com.clear.entity.Sail>
+     **/
+    List<Sail> querySailStatus(List<String> stationCodeS);
 
     /**
      * 查询Instrument数据
@@ -55,4 +76,13 @@ public interface VocRepository {
      * @return java.util.List<java.lang.String>
      **/
     List<Integer> queryInstrumentParameter(Integer instrumentid);
+
+    /**
+     * 查询车的历史走航列表
+     * @author 3Clear1
+     * @date 2020/8/18 14:56
+      * @param sailParamTemp
+     * @return java.util.List<com.clear.param.output.VocHistoryOut>
+     **/
+    List<VocHistoryOut> queryHistoryList(SailParamTemp sailParamTemp);
 }

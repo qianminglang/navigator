@@ -1,21 +1,19 @@
 package com.clear.repository.impl;
 
-import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
-import com.clear.domain.VocTemp;
+import com.clear.paramtemp.SailParamTemp;
+import com.clear.paramtemp.VocTemp;
 import com.clear.entity.Data;
 import com.clear.entity.Instrument;
 import com.clear.entity.Sail;
 import com.clear.mapper.SailMapper;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
+import com.clear.param.output.VocHistoryOut;
 import com.clear.repository.VocRepository;
 import org.springframework.stereotype.Repository;
 
 import javax.annotation.Resource;
-import java.util.Collections;
 import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * ClassName UserInfoRepositoryImpl
@@ -31,31 +29,20 @@ public class VocRepositoryImpl implements VocRepository {
     private SailMapper sailMapper;
 
     @Override
-    public List<SiteOut> queryUserSite(UserIdParam userIdParam) {
-        List<String> stationCodeS = sailMapper.queryUserSite(userIdParam);
-        //当查询关联表没有查询到数据，则直接返回空数据
-        if (CollectionUtils.isEmpty(stationCodeS)) {
-            return Collections.emptyList();
-        }
-        //查询走航车名称
-        List<SiteOut> siteOuts = sailMapper.queryUserSiteDetail(stationCodeS);
-        if(CollectionUtils.isEmpty(siteOuts)){
-            return Collections.emptyList();
-        }
-        //查询走航车的状态，取每个走航车最新的状态
-        List<Sail> siteStatus=sailMapper.querySailStatus(stationCodeS);
-        if(CollectionUtils.isNotEmpty(siteStatus)){
-            Map<String, Sail> sailMap = siteStatus.stream().collect(Collectors.toMap(Sail::getStationId, item -> item, (oldValue, newValue) -> newValue));
-            for (SiteOut siteOut : siteOuts) {
-                Sail sail = sailMap.get(siteOut.getStationcode());
-                siteOut.setStartTime(sail.getStartTime());
-                siteOut.setEndTime(sail.getEndTime());
-                siteOut.setEndUserId(sail.getEndUserId());
-                siteOut.setStartUserId(sail.getStartUserId());
-            }
-        }
-        return siteOuts;
+    public List<String> queryUserSite(UserIdParam userIdParam) {
+        return sailMapper.queryUserSite(userIdParam);
     }
+
+    @Override
+    public List<SiteOut> queryUserSiteDetail(List<String> stationCodeS) {
+        return sailMapper.queryUserSiteDetail(stationCodeS);
+    }
+
+    @Override
+    public List<Sail> querySailStatus(List<String> stationCodeS) {
+        return sailMapper.querySailStatus(stationCodeS);
+    }
+
 
     @Override
     public List<Instrument> queryInstrument(Instrument instrument) {
@@ -70,5 +57,10 @@ public class VocRepositoryImpl implements VocRepository {
     @Override
     public List<Integer> queryInstrumentParameter(Integer instrumentid) {
         return sailMapper.queryInstrumentParameter(instrumentid);
+    }
+
+    @Override
+    public List<VocHistoryOut> queryHistoryList(SailParamTemp sailParamTemp) {
+        return sailMapper.queryHistoryList(sailParamTemp);
     }
 }

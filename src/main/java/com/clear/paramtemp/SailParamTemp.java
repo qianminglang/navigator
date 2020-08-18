@@ -1,9 +1,12 @@
-package com.clear.domain;
+package com.clear.paramtemp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.Date;
+import java.util.List;
 
 /**
  * ClassName UserInfo
@@ -16,7 +19,11 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class UserInfo {
-    private String userName;
-    private String password;
+public class SailParamTemp {
+
+    private List<String> stationCodeS;
+
+    private Date startTime;
+
+    private Date endTime;
 }

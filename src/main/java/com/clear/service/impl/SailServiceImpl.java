@@ -4,16 +4,21 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.clear.consts.Constants;
 import com.clear.converter.input.SailInfoConverter;
-import com.clear.domain.VocTemp;
 import com.clear.entity.Data;
 import com.clear.entity.Instrument;
 import com.clear.entity.Sail;
+import com.clear.entity.SysUser;
 import com.clear.exception.ClearArgumentException;
 import com.clear.mapper.SailMapper;
 import com.clear.param.input.UserIdParam;
+import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
 import com.clear.param.output.SiteOut;
+import com.clear.param.output.VocHistoryOut;
 import com.clear.param.output.VocInfoOut;
+import com.clear.paramtemp.SailParamTemp;
+import com.clear.paramtemp.VocTemp;
+import com.clear.repository.UserInfoRepository;
 import com.clear.repository.VocRepository;
 import com.clear.service.SailService;
 import org.springframework.stereotype.Service;
@@ -21,10 +26,7 @@ import org.springframework.stereotype.Service;
 import javax.annotation.Resource;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 /**
@@ -40,12 +42,37 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 
     @Resource
     private SailInfoConverter sailInfoConverter;
+
     @Resource
     private VocRepository vocRepository;
 
+    @Resource
+    private UserInfoRepository userInfoRepository;
+
     @Override
     public List<SiteOut> queryUserSite(UserIdParam userIdParam) {
-        List<SiteOut> siteOuts = vocRepository.queryUserSite(userIdParam);
+        List<String> stationCodeS = vocRepository.queryUserSite(userIdParam);
+        //当查询关联表没有查询到数据，则直接返回空数据
+        if (CollectionUtils.isEmpty(stationCodeS)) {
+            return Collections.emptyList();
+        }
+        //查询走航车名称
+        List<SiteOut> siteOuts = vocRepository.queryUserSiteDetail(stationCodeS);
+        if (CollectionUtils.isEmpty(siteOuts)) {
+            return Collections.emptyList();
+        }
+        //查询走航车的状态，取每个走航车最新的状态
+        List<Sail> siteStatus = vocRepository.querySailStatus(stationCodeS);
+        if (CollectionUtils.isNotEmpty(siteStatus)) {
+            Map<String, Sail> sailMap = siteStatus.stream().collect(Collectors.toMap(Sail::getStationId, item -> item, (oldValue, newValue) -> newValue));
+            for (SiteOut siteOut : siteOuts) {
+                Sail sail = sailMap.get(siteOut.getStationcode());
+                siteOut.setStartTime(sail.getStartTime());
+                siteOut.setEndTime(sail.getEndTime());
+                siteOut.setEndUserId(sail.getEndUserId());
+                siteOut.setStartUserId(sail.getStartUserId());
+            }
+        }
         return siteOuts;
     }
 
@@ -135,5 +162,46 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .dataAry(dataAry)
                 .build();
         return vocInfoOut;
+    }
+
+    @Override
+    public List<VocHistoryOut> queryHistoryList(VocHistoryParam vocHistoryParam) {
+        UserIdParam userIdParam = UserIdParam.builder()
+                .userId(vocHistoryParam.getUserId())
+                .build();
+        List<String> stationCodeS = vocRepository.queryUserSite(userIdParam);
+        if (CollectionUtils.isEmpty(stationCodeS)) {
+            return Collections.emptyList();
+        }
+
+        //查询当前用户下的导航车历史数据
+        SailParamTemp sailParamTemp = SailParamTemp.builder()
+                .startTime(vocHistoryParam.getStartTime())
+                .endTime(vocHistoryParam.getEndTime())
+                .stationCodeS(stationCodeS)
+                .build();
+        List<VocHistoryOut> vocHistoryOutList = vocRepository.queryHistoryList(sailParamTemp);
+        if (CollectionUtils.isEmpty(vocHistoryOutList)) {
+            return Collections.emptyList();
+        }
+
+        List<String> startUserIds = vocHistoryOutList.stream().map(VocHistoryOut::getStartUserId).collect(Collectors.toList());
+        List<String> endUserIds = vocHistoryOutList.stream().map(VocHistoryOut::getEndUserId).collect(Collectors.toList());
+        startUserIds.addAll(endUserIds);
+        startUserIds.stream().distinct().collect(Collectors.toList());
+        
+        List<SysUser> sysUsers = userInfoRepository.selectUserInfoUserIds(startUserIds);
+        Map<String, SysUser> sysUserMap = sysUsers.stream().collect(Collectors.toMap(SysUser::getUserid, e -> e, (oldValue, newValue) -> newValue));
+        for (VocHistoryOut vocHistoryOut : vocHistoryOutList) {
+            SysUser startUser = sysUserMap.get(vocHistoryOut.getStartUserId());
+            if(Objects.nonNull(startUser)){
+                vocHistoryOut.setStartUserName(startUser.getUsername());
+            }
+            SysUser endUser = sysUserMap.get(vocHistoryOut.getStartUserId());
+            if(Objects.nonNull(endUser)){
+                vocHistoryOut.setEndUserName(endUser.getUsername());
+            }
+        }
+        return vocHistoryOutList;
     }
 }

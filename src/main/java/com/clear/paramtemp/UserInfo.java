@@ -1,4 +1,4 @@
-package com.clear.param.input;
+package com.clear.paramtemp;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -6,16 +6,17 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 /**
- * ClassName UserInfoParam
+ * ClassName UserInfo
  *
  * @author qml
- * Date 2020/8/13 13:25
+ * Date 2020/8/13 9:59
  * Version 1.0
  **/
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
+@NoArgsConstructor
 @Builder
-public class UserIdParam {
-    private String userId;
+public class UserInfo {
+    private String userName;
+    private String password;
 }

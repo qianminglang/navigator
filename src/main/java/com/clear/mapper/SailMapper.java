@@ -1,12 +1,14 @@
 package com.clear.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.clear.domain.VocTemp;
+import com.clear.paramtemp.SailParamTemp;
+import com.clear.paramtemp.VocTemp;
 import com.clear.entity.Data;
 import com.clear.entity.Instrument;
 import com.clear.entity.Sail;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
+import com.clear.param.output.VocHistoryOut;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -81,4 +83,13 @@ public interface SailMapper extends BaseMapper<Sail> {
      * @return java.util.List<java.lang.String>
      **/
     List<Integer> queryInstrumentParameter(Integer instrumentid);
+    
+    /**
+     * 查询车的历史走航列表
+     * @author 3Clear1
+     * @date 2020/8/18 14:57
+      * @param sailParamTemp
+     * @return java.util.List<com.clear.param.output.VocHistoryOut>
+     **/
+    List<VocHistoryOut> queryHistoryList(@Param("item")SailParamTemp sailParamTemp);
 }

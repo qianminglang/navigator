@@ -1,6 +1,8 @@
 package com.clear.entity;
 
 import com.baomidou.mybatisplus.annotation.TableName;
+import lombok.Builder;
+
 import java.time.LocalDateTime;
 import java.io.Serializable;
 
@@ -13,6 +15,7 @@ import java.io.Serializable;
  * @since 2020-08-17
  */
 @TableName("sail")
+@Builder
 public class Sail implements Serializable {
 
     private static final long serialVersionUID = 1L;
