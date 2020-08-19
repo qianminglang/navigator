@@ -54,6 +54,7 @@
                 and model= #{item.model}
             </if>
         </where>
+        limit 1;
     </select>
 
     <select id="querySailStatus" resultType="com.clear.entity.Sail">

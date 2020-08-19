@@ -45,7 +45,7 @@ public class VocRepositoryImpl implements VocRepository {
 
 
     @Override
-    public List<Instrument> queryInstrument(Instrument instrument) {
+    public Instrument queryInstrument(Instrument instrument) {
         return sailMapper.queryInstrument(instrument);
     }
 

@@ -54,7 +54,7 @@ public interface SailMapper extends BaseMapper<Sail> {
      * @author 3Clear1
      * @date 2020/8/17 20:16
      **/
-    List<Instrument> queryInstrument(@Param("item") Instrument instrument);
+    Instrument queryInstrument(@Param("item") Instrument instrument);
 
     /**
      * 查询voc数据
@@ -68,28 +68,31 @@ public interface SailMapper extends BaseMapper<Sail> {
 
     /**
      * 查询走航车的状态
+     *
+     * @param stationCodeS
+     * @return java.util.List<com.clear.entity.Sail>
      * @author 3Clear1
      * @date 2020/8/18 9:43
-      * @param stationCodeS
-     * @return java.util.List<com.clear.entity.Sail>
      **/
-    List<Sail> querySailStatus(@Param("items")List<String> stationCodeS);
+    List<Sail> querySailStatus(@Param("items") List<String> stationCodeS);
 
     /**
      * 根据设置查询因子
+     *
+     * @param instrumentid
+     * @return java.util.List<java.lang.String>
      * @author 3Clear1
      * @date 2020/8/18 10:35
-      * @param instrumentid
-     * @return java.util.List<java.lang.String>
      **/
     List<Integer> queryInstrumentParameter(Integer instrumentid);
-    
+
     /**
      * 查询车的历史走航列表
+     *
+     * @param sailParamTemp
+     * @return java.util.List<com.clear.param.output.VocHistoryOut>
      * @author 3Clear1
      * @date 2020/8/18 14:57
-      * @param sailParamTemp
-     * @return java.util.List<com.clear.param.output.VocHistoryOut>
      **/
-    List<VocHistoryOut> queryHistoryList(@Param("item")SailParamTemp sailParamTemp);
+    List<VocHistoryOut> queryHistoryList(@Param("item") SailParamTemp sailParamTemp);
 }
