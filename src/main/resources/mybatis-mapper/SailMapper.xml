@@ -64,16 +64,11 @@
         end_user_id,
         station_id
         from sail
-        where start_time in
-        (select max(start_time) from sail where station_id in
+        where  station_id in
         <foreach collection="items" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
-        group by station_id)
-        and station_id in
-        <foreach collection="items" item="item" index="index" open="(" separator="," close=")">
-            #{item}
-        </foreach>
+        order by sail desc
     </select>
 
     <select id="queryInstrumentParameter" resultType="java.lang.Integer">

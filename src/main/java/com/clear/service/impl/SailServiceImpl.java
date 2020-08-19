@@ -155,26 +155,54 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 
         //查询走航车的状态，取每个走航车最新的状态
         List<Sail> siteStatus = vocRepository.querySailStatus(stationCodeS);
+
+        //下面代码的逻辑就是根据车分组取出走航任务结束时间最新的一条数据
+        //优先取结束时间为空的（走航任务还没有结束），如果结束时间为空的有多条则取id最大的一条（数据库查询的时候有倒序）
+        //结束时间不为空则任意取一条
         if (CollectionUtils.isNotEmpty(siteStatus)) {
-            Map<String, Sail> sailMap = siteStatus.stream().collect(Collectors.toMap(Sail::getStationId, e -> e, (oldValue, newValue) -> newValue));
             for (SiteOut siteOut : siteOuts) {
-                Sail sail = sailMap.get(siteOut.getId());
-                siteOut.setStartTime(sail.getStartTime());
-                siteOut.setEndTime(sail.getEndTime());
-                siteOut.setEndUserId(sail.getEndUserId());
-                siteOut.setStartUserId(sail.getStartUserId());
-                LocalDateTime endTime = sail.getEndTime();
+                String id = siteOut.getId();
+                //1.先筛选相同id的数据
+                List<Sail> ids = siteStatus.stream().filter(item -> id.equals(item.getStationId())).collect(Collectors.toList());
+                Sail sail = null;
+                LocalDateTime startTime = null;
+                LocalDateTime endTime = null;
+                String endUserId = null;
+                String startUserId = null;
+                //车id下存在走航任务
+                if (CollectionUtils.isNotEmpty(ids)) {
+                    //2.再筛选结束时间为空的数据
+                    List<Sail> endTimeNull = ids.stream().filter(item -> null == item.getEndTime()).collect(Collectors.toList());
+                    if (CollectionUtils.isNotEmpty(endTimeNull)) {
+                        //当数据不唯一则任意取一条
+                        sail = endTimeNull.get(0);
+                    } else {
+                        sail = ids.get(0);
+                    }
+                    startTime = sail.getStartTime();
+                    endTime = sail.getEndTime();
+                    endUserId = sail.getEndUserId();
+                    startUserId = sail.getStartUserId();
+                }
+
+                siteOut.setStartTime(startTime);
+                siteOut.setEndTime(endTime);
+                siteOut.setEndUserId(endUserId);
+                siteOut.setStartUserId(startUserId);
                 //sailing 1表示在走航中
                 Integer sailing = 0;
                 if (Objects.isNull(endTime)) {
                     endTime = LocalDateTime.now();
                     sailing = 1;
                 }
-                CurTask curTask = CurTask.builder()
-                        .timeS(sail.getStartTime())
-                        .timeE(endTime)
-                        .id(sail.getSailId())
-                        .build();
+                CurTask curTask = null;
+                if (!Objects.isNull(sail)) {
+                    curTask = CurTask.builder()
+                            .timeS(sail.getStartTime())
+                            .timeE(endTime)
+                            .id(sail.getSailId())
+                            .build();
+                }
                 siteOut.setCurTask(curTask);
                 siteOut.setSailing(sailing);
                 siteOut.setEquAry(Arrays.asList(equ));
