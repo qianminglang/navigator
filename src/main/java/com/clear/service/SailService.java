@@ -5,10 +5,7 @@ import com.clear.entity.Sail;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
-import com.clear.param.output.SiteOut;
-import com.clear.param.output.VocHistoryInfoOut;
-import com.clear.param.output.VocHistoryOut;
-import com.clear.param.output.VocRealTimeInfoOut;
+import com.clear.param.output.*;
 
 import java.util.List;
 
@@ -56,4 +53,13 @@ public interface SailService extends IService<Sail> {
      * @return java.util.List<com.clear.param.output.VocHistoryOut>
      **/
     List<VocHistoryOut> queryHistoryList(VocHistoryParam vocHistoryParam);
+
+    /**
+     * 查询voc计算结果，查询data_derived表
+     * @author 3Clear1
+     * @date 2020/8/19 11:25
+      * @param vocParam
+     * @return com.clear.param.output.VocComposeInfoOut
+     **/
+    VocComposeInfoOut queryComposeVocDate(VocParam vocParam);
 }

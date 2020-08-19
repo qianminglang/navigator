@@ -5,12 +5,8 @@ import com.clear.param.Response;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
-import com.clear.param.output.SiteOut;
-import com.clear.param.output.VocHistoryInfoOut;
-import com.clear.param.output.VocHistoryOut;
-import com.clear.param.output.VocRealTimeInfoOut;
+import com.clear.param.output.*;
 import com.clear.service.SailService;
-import com.fasterxml.jackson.core.JsonProcessingException;
 import org.springframework.web.bind.annotation.*;
 
 import javax.annotation.Resource;
@@ -41,7 +37,7 @@ public class SailController {
      **/
     @PostMapping("/userSite")
     @ResponseBody
-    public Response<List<SiteOut>> queryUserSite(@RequestBody UserIdParam userIdParam) throws JsonProcessingException {
+    public Response<List<SiteOut>> queryUserSite(@RequestBody UserIdParam userIdParam) {
         List<SiteOut> siteOutList = sailService.queryUserSite(userIdParam);
         return Response.SUCCESS(siteOutList);
     }
@@ -56,7 +52,7 @@ public class SailController {
      **/
     @PostMapping("/queryRealTimeVocData")
     @ResponseBody
-    public Response<VocRealTimeInfoOut> queryRealTimeVocData(@RequestBody VocParam vocParam) throws JsonProcessingException {
+    public Response<VocRealTimeInfoOut> queryRealTimeVocData(@RequestBody VocParam vocParam) {
         VocRealTimeInfoOut vocInfoOut = sailService.queryRealTimeVocData(vocParam);
         return Response.SUCCESS(vocInfoOut);
     }
@@ -71,7 +67,7 @@ public class SailController {
      **/
     @PostMapping("/queryHistoryVocData")
     @ResponseBody
-    public Response<List<VocHistoryInfoOut>> queryHistoryVocData(@RequestBody VocParam vocParam) throws JsonProcessingException {
+    public Response<List<VocHistoryInfoOut>> queryHistoryVocData(@RequestBody VocParam vocParam) {
         List<VocHistoryInfoOut> vocInfoOut = sailService.queryHistoryVocData(vocParam);
         return Response.SUCCESS(vocInfoOut);
     }
@@ -86,8 +82,22 @@ public class SailController {
      **/
     @PostMapping("/queryHistoryList")
     @ResponseBody
-    public Response<List<VocHistoryOut>> queryHistoryList(@RequestBody VocHistoryParam vocHistoryParam) throws JsonProcessingException {
+    public Response<List<VocHistoryOut>> queryHistoryList(@RequestBody VocHistoryParam vocHistoryParam) {
         List<VocHistoryOut> vocHistoryOutList = sailService.queryHistoryList(vocHistoryParam);
         return Response.SUCCESS(vocHistoryOutList);
+    }
+
+    /**
+     * 查询voc计算结果，查询data_derived表
+     * @author 3Clear1
+     * @date 2020/8/19 11:24
+     * @param vocParam
+     * @return com.clear.param.Response<java.lang.Object>
+     **/
+    @PostMapping("/queryComposeVocDate")
+    @ResponseBody
+    public Response<Object> queryComposeVocDate(@RequestBody VocParam vocParam){
+        VocComposeInfoOut vocComposeInfoOut = sailService.queryComposeVocDate(vocParam);
+        return Response.SUCCESS(vocComposeInfoOut);
     }
 }
