@@ -164,10 +164,11 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 siteOut.setEndUserId(sail.getEndUserId());
                 siteOut.setStartUserId(sail.getStartUserId());
                 LocalDateTime endTime = sail.getEndTime();
-                Integer sailing = 1;
+                //sailing 1表示在走航中
+                Integer sailing = 0;
                 if (Objects.isNull(endTime)) {
                     endTime = LocalDateTime.now();
-                    sailing = 0;
+                    sailing = 1;
                 }
                 CurTask curTask = CurTask.builder()
                         .timeS(sail.getStartTime())
