@@ -1,5 +1,7 @@
 package com.clear.param.input;
 
+import com.clear.param.output.RequestParam;
+import com.clear.util.ParamUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,11 +19,17 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class VocParam {
+public class VocParam extends RequestParam {
     private String stationCode;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
 
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date endTime;
+
+    @Override
+    public void checkInput() {
+        super.checkInput();
+        ParamUtil.notBlank(stationCode, "导航车编号不能为空");
+    }
 }

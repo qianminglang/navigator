@@ -43,6 +43,17 @@ public class UserInfoServiceImpl implements UserInfoService {
             return resultMap;
         }
 
+
+//        boolean flag = false;
+//        for (SysUser user : sysUsers) {
+//            //查询到的密码
+//            String userpwd = user.getUserpwd();
+//            //入参密码
+//            String passWord = loginParam.getPassWord();
+//            flag = BCrypt.checkpw(passWord, userpwd);
+//        }
+
+
         //TODO 还未实现密码加密密码加密
 //        String password = stringEncryptor.encrypt(userInfoDto.getPassWord());
         String password = sysUser.getUserpwd();

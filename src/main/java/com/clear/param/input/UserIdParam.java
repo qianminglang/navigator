@@ -1,5 +1,7 @@
 package com.clear.param.input;
 
+import com.clear.param.output.RequestParam;
+import com.clear.util.ParamUtil;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -16,6 +18,12 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class UserIdParam {
+public class UserIdParam extends RequestParam {
     private String userId;
+
+    @Override
+    public void checkInput() {
+        super.checkInput();
+        ParamUtil.notBlank(userId,"用户id不能为空");
+    }
 }

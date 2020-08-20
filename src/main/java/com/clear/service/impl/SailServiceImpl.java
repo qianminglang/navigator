@@ -42,6 +42,7 @@ import java.util.stream.Collectors;
 @Service
 public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements SailService {
     private static final Map<String, String> staticMap = new LinkedHashMap();
+    private static final Map<Integer, String> staticDerivedMap = new LinkedHashMap();
     private static final Map EnStaticMap = new LinkedHashMap();
     private static final DateTimeFormatter dateTimeFormatter = Constants.dateTimeFormatter;
 
@@ -57,6 +58,16 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
     private UserInfoRepository userInfoRepository;
 
     static {
+//        衍生数据类型：0-最大voc、1-TVOC、2-最大OFP、3-最大SOAP、4-OFP、5-SOAP、6-OFP总和、7-SOAP总和
+        staticDerivedMap.put(0, "最大voc");
+        staticDerivedMap.put(1, "TVOC");
+        staticDerivedMap.put(2, "最大OFP");
+        staticDerivedMap.put(3, "最大SOAP");
+        staticDerivedMap.put(4, "OFP");
+        staticDerivedMap.put(5, "SOAP");
+        staticDerivedMap.put(6, "OFP总和");
+        staticDerivedMap.put(7, "SOAP总和");
+
 
         staticMap.put("31", "经度");
         staticMap.put("32", "纬度");
@@ -131,7 +142,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 
     @Override
     public List<SiteOut> queryUserSite(UserIdParam userIdParam) {
-        List<String> stationCodeS = vocRepository.queryUserSite(userIdParam);
+        List<String> stationCodeS = vocRepository.queryUserSite(userIdParam).stream().distinct().collect(Collectors.toList());
         //当查询关联表没有查询到数据，则直接返回空数据
         if (CollectionUtils.isEmpty(stationCodeS)) {
             return Collections.emptyList();
@@ -203,7 +214,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                     curTask = CurTask.builder()
                             .timeS(sail.getStartTime())
                             .timeE(endTime)
-                            .id(sail.getSailId())
+                            .id(sail.getSailId().toString())
                             .build();
                 }
                 siteOut.setCurTask(curTask);
@@ -303,11 +314,19 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             List<DataDerived> dataDerivedOneTime = dataDerivedMap.get(time);
             if (CollectionUtils.isNotEmpty(dataDerivedOneTime)) {
                 //根据type排序
-                dataDerivedOneTime.sort(Comparator.comparing(DataDerived::getType));
-                //只需要取出排序后的value值,如果是null就置为-999
-                zhenDuanList = dataDerivedOneTime.stream().map(e -> Optional.ofNullable(e.getValue()).orElse(new BigDecimal(-999)).floatValue()).collect(Collectors.toList());
+//                dataDerivedOneTime.sort(Comparator.comparing(DataDerived::getType));
+                Map<Integer, DataDerived> derivedTypeMap = dataDerivedOneTime.stream().collect(Collectors.toMap(DataDerived::getType, e -> e, (oldValue, newValue) -> newValue));
+                for (Integer key : staticDerivedMap.keySet()) {
+                    DataDerived dataDerived = derivedTypeMap.get(key);
+                    if (Objects.nonNull(dataDerived)) {
+                        zhenDuanList.add(Optional.ofNullable(dataDerived.getValue()).orElse(new BigDecimal(-999)).floatValue());
+                    } else {
+                        zhenDuanList.add(-999f);
+                    }
+                }
+//                //只需要取出排序后的value值,如果是null就置为-999
+//                zhenDuanList = dataDerivedOneTime.stream().map(e -> Optional.ofNullable(e.getValue()).orElse(new BigDecimal(-999)).floatValue()).collect(Collectors.toList());
             }
-
             if (Objects.nonNull(lonLatList)) {
                 lonLatList.add(0f);
                 timeAry.add(time);

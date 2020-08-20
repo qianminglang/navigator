@@ -2,6 +2,7 @@ package com.clear.config;
 
 import com.clear.param.Response;
 import lombok.extern.slf4j.Slf4j;
+import org.aspectj.lang.JoinPoint;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
@@ -40,7 +41,7 @@ public class TimeAspect {
     ThreadLocal<Long> startTime = new ThreadLocal<>();
 
     @Before("log()")
-    public void doBefore() {
+    public void doBefore(JoinPoint joinPoint) {
         startTime.set(System.currentTimeMillis());
         ServletRequestAttributes requestAttributes = (ServletRequestAttributes) RequestContextHolder.getRequestAttributes();
         HttpServletRequest request = requestAttributes.getRequest();
