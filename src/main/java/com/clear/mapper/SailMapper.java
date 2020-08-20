@@ -1,14 +1,13 @@
 package com.clear.mapper;
 
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
-import com.clear.paramtemp.SailParamTemp;
-import com.clear.paramtemp.VocTemp;
-import com.clear.entity.Data;
-import com.clear.entity.Instrument;
-import com.clear.entity.Sail;
+import com.clear.entity.*;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
+import com.clear.paramtemp.SailParamTemp;
+import com.clear.paramtemp.VocDerviedTemp;
+import com.clear.paramtemp.VocTemp;
 import org.apache.ibatis.annotations.Mapper;
 import org.apache.ibatis.annotations.Param;
 
@@ -95,4 +94,24 @@ public interface SailMapper extends BaseMapper<Sail> {
      * @date 2020/8/18 14:57
      **/
     List<VocHistoryOut> queryHistoryList(@Param("item") SailParamTemp sailParamTemp);
+
+    /**
+     * 查询voc衍生数据，表data_derived
+     *
+     * @param vocDerviedTemp
+     * @return java.util.List<com.clear.entity.DataDerived>
+     * @author 3Clear1
+     * @date 2020/8/19 17:14
+     **/
+    List<DataDerived> queryDerivedsVocData(@Param("item") VocDerviedTemp vocDerviedTemp);
+
+    /**
+     * 查询voc数据
+     *
+     * @param vocTemp
+     * @return com.clear.param.output.VocInfoOut
+     * @author 3Clear1
+     * @date 2020/8/17 18:42
+     **/
+    List<DataVoc> getUgm3Data(@Param("item") VocTemp vocTemp);
 }

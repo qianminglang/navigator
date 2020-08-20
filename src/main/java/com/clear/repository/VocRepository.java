@@ -1,13 +1,12 @@
 package com.clear.repository;
 
-import com.clear.paramtemp.SailParamTemp;
-import com.clear.paramtemp.VocTemp;
-import com.clear.entity.Data;
-import com.clear.entity.Instrument;
-import com.clear.entity.Sail;
+import com.clear.entity.*;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
+import com.clear.paramtemp.SailParamTemp;
+import com.clear.paramtemp.VocDerviedTemp;
+import com.clear.paramtemp.VocTemp;
 
 import java.util.List;
 
@@ -90,4 +89,22 @@ public interface VocRepository {
      * @date 2020/8/18 14:56
      **/
     List<VocHistoryOut> queryHistoryList(SailParamTemp sailParamTemp);
+
+    /**
+     * 查询voc衍生数据，表data_derived
+     * @author 3Clear1
+     * @date 2020/8/19 17:14
+      * @param vocDerviedTemp
+     * @return java.util.List<com.clear.entity.DataDerived>
+     **/
+    List<DataDerived> queryDerivedsVocData(VocDerviedTemp vocDerviedTemp);
+
+    /**
+     * 查询data_voc表,得到voc以微克/立方
+     * @author 3Clear1
+     * @date 2020/8/20 13:46
+      * @param vocTemp
+     * @return java.util.List<com.clear.entity.DataVoc>
+     **/
+    List<DataVoc> getUgm3Data(VocTemp vocTemp);
 }

@@ -1,14 +1,13 @@
 package com.clear.repository.impl;
 
-import com.clear.paramtemp.SailParamTemp;
-import com.clear.paramtemp.VocTemp;
-import com.clear.entity.Data;
-import com.clear.entity.Instrument;
-import com.clear.entity.Sail;
+import com.clear.entity.*;
 import com.clear.mapper.SailMapper;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
+import com.clear.paramtemp.SailParamTemp;
+import com.clear.paramtemp.VocDerviedTemp;
+import com.clear.paramtemp.VocTemp;
 import com.clear.repository.VocRepository;
 import org.springframework.stereotype.Repository;
 
@@ -62,5 +61,15 @@ public class VocRepositoryImpl implements VocRepository {
     @Override
     public List<VocHistoryOut> queryHistoryList(SailParamTemp sailParamTemp) {
         return sailMapper.queryHistoryList(sailParamTemp);
+    }
+
+    @Override
+    public List<DataDerived> queryDerivedsVocData(VocDerviedTemp vocDerviedTemp) {
+        return sailMapper.queryDerivedsVocData(vocDerviedTemp);
+    }
+
+    @Override
+    public List<DataVoc> getUgm3Data(VocTemp vocTemp) {
+        return sailMapper.getUgm3Data(vocTemp);
     }
 }

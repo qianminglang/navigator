@@ -65,11 +65,11 @@
         end_user_id,
         station_id
         from sail
-        where  station_id in
+        where station_id in
         <foreach collection="items" item="item" index="index" open="(" separator="," close=")">
             #{item}
         </foreach>
-        order by sail desc
+        order by end_time desc
     </select>
 
     <select id="queryInstrumentParameter" resultType="java.lang.Integer">
@@ -96,7 +96,7 @@
             <if test="item.startTime!=null">
                 start_time &gt;=#{item.startTime}
             </if>
-            <if test="item.startTime!=null">
+            <if test="item.endTime!=null">
                 and end_time &lt;=#{item.endTime}
             </if>
             and station_id in
@@ -112,6 +112,57 @@
             resultType="com.clear.entity.Data">
         select parameterid,value,lst
         from data
+        <where>
+            <if test="item.stationcode!=null and item.stationcode!=''">
+                stationcode=#{item.stationcode}
+            </if>
+            <if test="item.parameterid!=null and item.parameterid!=''">
+                and parameterid=#{item.parameterid}
+            </if>
+            <if test="item.durationid!=null and item.durationid!=''">
+                and durationid=#{item.durationid}
+            </if>
+            <if test="item.startTime!=null">
+                and lst &gt;=#{item.startTime}
+            </if>
+            <if test="item.endTime!=null">
+                and lst &lt;=#{item.endTime}
+            </if>
+            and instrumentid in
+            <foreach collection="item.instrumentids" item="item" index="index" open="(" separator="," close=")">
+                #{item}
+            </foreach>
+            order by lst
+        </where>
+    </select>
+
+    <select id="queryDerivedsVocData" resultType="com.clear.entity.DataDerived">
+        select parameterid,value,lst,type
+        from data_derived
+        <where>
+            <if test="item.parameterid!=null and item.parameterid!=''">
+                and parameterid=#{item.parameterid}
+            </if>
+            <if test="item.durationid!=null and item.durationid!=''">
+                and durationid=#{item.durationid}
+            </if>
+            <if test="item.startTime!=null">
+                and lst &gt;=#{item.startTime}
+            </if>
+            <if test="item.endTime!=null">
+                and lst &lt;=#{item.endTime}
+            </if>
+            <if test="item.instrumentid!=null and item.instrumentid!=''">
+                and instrumentid =#{item.instrumentid}
+            </if>
+        </where>
+    </select>
+
+    <select id="getUgm3Data"
+            parameterType="com.clear.paramtemp.VocTemp"
+            resultType="com.clear.entity.DataVoc">
+        select parameterid,value,lst
+        from data_voc
         <where>
             <if test="item.stationcode!=null and item.stationcode!=''">
                 stationcode=#{item.stationcode}

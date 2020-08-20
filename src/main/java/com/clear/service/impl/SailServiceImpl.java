@@ -7,6 +7,7 @@ import com.clear.converter.input.SailInfoConverter;
 import com.clear.entity.*;
 import com.clear.exception.ClearArgumentException;
 import com.clear.mapper.SailMapper;
+import com.clear.param.input.BusParam;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
@@ -15,13 +16,16 @@ import com.clear.param.output.Param.Equ;
 import com.clear.param.output.Param.Item;
 import com.clear.param.output.*;
 import com.clear.paramtemp.SailParamTemp;
+import com.clear.paramtemp.VocDerviedTemp;
 import com.clear.paramtemp.VocTemp;
 import com.clear.repository.UserInfoRepository;
 import com.clear.repository.VocRepository;
 import com.clear.service.SailService;
+import com.google.common.collect.Maps;
 import org.springframework.stereotype.Service;
 
 import javax.annotation.Resource;
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.*;
@@ -41,6 +45,16 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
     private static final Map EnStaticMap = new LinkedHashMap();
     private static final DateTimeFormatter dateTimeFormatter = Constants.dateTimeFormatter;
 
+    private static final List initTypeList = Arrays.asList(new Float[]{-999f, -999f, -999f, -999f});
+
+    @Resource
+    private SailInfoConverter sailInfoConverter;
+
+    @Resource
+    private VocRepository vocRepository;
+
+    @Resource
+    private UserInfoRepository userInfoRepository;
 
     static {
 
@@ -114,14 +128,6 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         EnStaticMap.put("208", "BQQ");
     }
 
-    @Resource
-    private SailInfoConverter sailInfoConverter;
-
-    @Resource
-    private VocRepository vocRepository;
-
-    @Resource
-    private UserInfoRepository userInfoRepository;
 
     @Override
     public List<SiteOut> queryUserSite(UserIdParam userIdParam) {
@@ -213,7 +219,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
     }
 
     @Override
-    public VocRealTimeInfoOut queryRealTimeVocData(VocParam vocParam) {
+    public VocHisTimeInfoOut queryHisVocData(VocParam vocParam) {
         //根据走航车编码查询voc的仪器编码，查询的是instrument表
         Instrument vocInstrument = Instrument.builder()
                 .stationcode(vocParam.getStationCode())
@@ -248,59 +254,92 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 
         //查询voc数据
         VocTemp vocTemp = sailInfoConverter.vocParamConvert(vocParam);
-        Integer durationid = vocInstrumentOutPut.getDurationid();
+        Integer vocDurationid = vocInstrumentOutPut.getDurationid();
         ArrayList<Integer> instrumentids = new ArrayList<>();
         //查询因子数据既要查询voc，也要查询gps（经纬度）
         instrumentids.add(vocInstrumentid);
         instrumentids.add(gpsInstrumentOutPut.getInstrumentid());
-        List<Data> dataList = getVocData(durationid, instrumentids, vocTemp);
+        vocTemp.setInstrumentids(instrumentids);
+        vocTemp.setDurationid(vocDurationid);
+        List<Data> dataList = getVocData(vocTemp);
+
+        //查询TvOC等四个衍生数据
+        VocDerviedTemp vocDerviedTemp = VocDerviedTemp.builder()
+                .durationid(vocDurationid)
+                .instrumentid(vocInstrumentid)
+                .startTime(vocTemp.getStartTime())
+                .endTime(vocTemp.getEndTime())
+                .build();
+        List<DataDerived> dataDeriveds = getDerivedsVocData(vocDerviedTemp);
+        Map<Long, List<DataDerived>> dataDerivedMap = dataDeriveds.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
+
+        //查询data_voc表，计算因子mg/立方米数据
+        List<DataVoc> ugm3Data = getUgm3Data(vocTemp);
+        Map<Long, List<DataVoc>> ugm3Map = ugm3Data.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
 
         //初始化结果
-        List<LocalDateTime> lsAry = new LinkedList<>();
-        List<List<Float>> ptAry = new LinkedList<>();
-        List<List<Float>> dataAry = new LinkedList<>();
-
-        for (Data data : dataList) {
-            LocalDateTime lst = data.getLst();
-            lsAry.add(lst);
-        }
-        //时间去重
-        lsAry = lsAry.stream().distinct().collect(Collectors.toList());
         List<Long> timeAry = new LinkedList<>();
-        for (LocalDateTime localDateTime : lsAry) {
-            timeAry.add(Long.valueOf(dateTimeFormatter.format(localDateTime)));
-        }
-        Map<LocalDateTime, List<Data>> dateTimeListMap = dataList.stream().collect(Collectors.groupingBy(Data::getLst));
-        for (LocalDateTime ls : lsAry) {
+        List<List<Float>> ptAry = new LinkedList<>();
+        List<List<Float>> dataAryPVB = new LinkedList<>();
+        List<List<Float>> dataAryUgm3 = new LinkedList<>();
+        List<List<Float>> dataAryZhenDuan = new LinkedList<>();
+
+        Map<Long, List<Data>> dateTimeListMap = dataList.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
+        dateTimeListMap = sortByKey(dateTimeListMap, false);
+        for (Map.Entry<Long, List<Data>> longListEntry : dateTimeListMap.entrySet()) {
+            Long time = longListEntry.getKey();
             List<Float> lonLatList = new LinkedList<>();
-            List<Float> parameterValueList = new LinkedList<>();
-            List<Data> groupData = dateTimeListMap.get(ls);
-            getParameterResult(parameters, groupData, lonLatList, parameterValueList);
-            lonLatList.add(0f);
-            ptAry.add(lonLatList);
-            dataAry.add(parameterValueList);
+            List<Float> pvbList = new LinkedList<>();
+            List<Float> ugm3List = new LinkedList<>();
+            List<Float> zhenDuanList = new LinkedList<>();
+            List<Data> groupData = dateTimeListMap.get(time);
+
+            //根据每个时间点封装data（因子普通数据，单位pvb）表中数据,和data_voc（因子普通数据，单位毫克/立方米）的数据
+            //根据每个时间点封装data_voc的数据
+            List<DataVoc> oneTimeUgm3Data = ugm3Map.get(time);
+            getParameterResult(parameters, groupData, lonLatList, pvbList, oneTimeUgm3Data, ugm3List);
+
+            //根据每个时间点封装data_derived（诊断量）表中数据
+            List<DataDerived> dataDerivedOneTime = dataDerivedMap.get(time);
+            if (CollectionUtils.isNotEmpty(dataDerivedOneTime)) {
+                //根据type排序
+                dataDerivedOneTime.sort(Comparator.comparing(DataDerived::getType));
+                //只需要取出排序后的value值,如果是null就置为-999
+                zhenDuanList = dataDerivedOneTime.stream().map(e -> Optional.ofNullable(e.getValue()).orElse(new BigDecimal(-999)).floatValue()).collect(Collectors.toList());
+            }
+
+            if (Objects.nonNull(lonLatList)) {
+                lonLatList.add(0f);
+                timeAry.add(time);
+                ptAry.add(lonLatList);
+                dataAryPVB.add(pvbList);
+                dataAryUgm3.add(ugm3List);
+                dataAryZhenDuan.add(zhenDuanList);
+            }
         }
-        VocRealTimeInfoOut vocInfoOut = VocRealTimeInfoOut.builder()
+        VocHisTimeInfoOut vocInfoOut = VocHisTimeInfoOut.builder()
                 .timeAry(timeAry)
                 .ptAry(ptAry)
-                .dataAry(dataAry)
+                .dataAryPVB(dataAryPVB)
+                .dataAryUgm3(dataAryUgm3)
+                .dataAryZhenDuan(dataAryZhenDuan)
                 .build();
         return vocInfoOut;
+    }
+
+    private List<DataVoc> getUgm3Data(VocTemp vocTemp) {
+        return vocRepository.getUgm3Data(vocTemp);
     }
 
     /**
      * 查询voc数据
      *
-     * @param durationid
-     * @param instrumentids
      * @param vocTemp
      * @return java.util.List<com.clear.entity.Data>
      * @author 3Clear1
      * @date 2020/8/19 12:17
      **/
-    private List<Data> getVocData(Integer durationid, List instrumentids, VocTemp vocTemp) {
-        vocTemp.setInstrumentids(instrumentids);
-        vocTemp.setDurationid(durationid);
+    private List<Data> getVocData(VocTemp vocTemp) {
         return vocRepository.queryVocData(vocTemp);
     }
 
@@ -317,7 +356,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
     }
 
     @Override
-    public List<VocHistoryInfoOut> queryHistoryVocData(VocParam vocParam) {
+    public List<VocRealInfoOut> queryRealVocData(VocParam vocParam) {
         //根据走航车编码查询voc的仪器编码，查询的是instrument表
         Instrument vocInstrument = Instrument.builder()
                 .stationcode(vocParam.getStationCode())
@@ -352,8 +391,10 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         ArrayList<Integer> instrumentids = new ArrayList<>();
         //查询因子数据既要查询voc，也要查询gps（经纬度）
         instrumentids.add(vocInstrumentid);
-        instrumentids.add(gpsInstrument.getInstrumentid());
-        List<Data> dataList = getVocData(durationid, instrumentids, vocTemp);
+        instrumentids.add(gpsInstrumentOut.getInstrumentid());
+        vocTemp.setDurationid(durationid);
+        vocTemp.setInstrumentids(instrumentids);
+        List<Data> dataList = getVocData(vocTemp);
 
         //初始化结果
         List<LocalDateTime> lsAry = new LinkedList<>();
@@ -364,14 +405,14 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         //时间去重
         lsAry = lsAry.stream().distinct().collect(Collectors.toList());
         Map<LocalDateTime, List<Data>> dateTimeListMap = dataList.stream().collect(Collectors.groupingBy(Data::getLst));
-        LinkedList<VocHistoryInfoOut> resultList = new LinkedList<>();
+        LinkedList<VocRealInfoOut> resultList = new LinkedList<>();
         for (LocalDateTime ls : lsAry) {
-            VocHistoryInfoOut vocHistoryInfoOut = new VocHistoryInfoOut();
+            VocRealInfoOut vocHistoryInfoOut = new VocRealInfoOut();
             List<Data> groupData = dateTimeListMap.get(ls);
             LinkedList<Float> lonLatList = new LinkedList<>();
             LinkedList<Float> parameterValueList = new LinkedList<>();
             Long aLong = Long.valueOf(dateTimeFormatter.format(ls));
-            getParameterResult(parameters, groupData, lonLatList, parameterValueList);
+//            getParameterResult(parameters, groupData, lonLatList, parameterValueList);
             lonLatList.add(0f);
             vocHistoryInfoOut.setTime(aLong);
             vocHistoryInfoOut.setDataAry(parameterValueList);
@@ -394,28 +435,50 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         return vocRepository.queryInstrumentParameter(instrumentid);
     }
 
-    private void getParameterResult(List<Integer> parameters, List<Data> groupData, List<Float> lonLatList, List<Float> parameterValueList) {
+    /**
+     * 封装从data表中查询出来的数据
+     *
+     * @param parameters
+     * @param groupData
+     * @param lonLatList
+     * @param pvbList
+     * @return void
+     * @author 3Clear1
+     * @date 2020/8/20 9:35
+     **/
+    private void getParameterResult(List<Integer> parameters, List<Data> groupData, List<Float> lonLatList, List<Float> pvbList, List<DataVoc> oneTimeUgm3Data, List<Float> ugm3List) {
+        //当经纬度有一个不存在的时候lonLatList就置位null，方法接受到lonLatList为null的时候则移除当前时间的数据
         groupData.sort(Comparator.comparing(Data::getParameterid));
+        Map<Integer, DataVoc> Ugm3DataMap = new HashMap<>();
+        if (Objects.nonNull(oneTimeUgm3Data)) {
+            Ugm3DataMap = oneTimeUgm3Data.stream().collect(Collectors.toMap(DataVoc::getParameterid, e -> e, (oldValue, newValue) -> newValue));
+        }
         Map<Integer, Data> dataMap = groupData.stream().collect(Collectors.toMap(Data::getParameterid, e -> e, (oldValue, newValue) -> newValue));
         for (String key : staticMap.keySet()) {
+            DataVoc Ugm3Data = Ugm3DataMap.get(Integer.valueOf(key));
             Data data = dataMap.get(Integer.valueOf(key));
             if (Constants.INTEGER_31.equals(Integer.valueOf(key))) {
                 if (Objects.nonNull(data)) {
                     lonLatList.add(data.getValue().floatValue());
                 } else {
-                    lonLatList.add(-999f);
+                    lonLatList = null;
                 }
             } else if (Constants.INTEGER_32.equals(Integer.valueOf(key))) {
                 if (Objects.nonNull(data)) {
                     lonLatList.add(data.getValue().floatValue());
                 } else {
-                    lonLatList.add(-999f);
+                    lonLatList = null;
                 }
             } else {
                 if (Objects.nonNull(data)) {
-                    parameterValueList.add(data.getValue().floatValue());
+                    pvbList.add(Optional.ofNullable(data.getValue()).orElse(new BigDecimal(-999)).floatValue());
                 } else {
-                    parameterValueList.add(-999f);
+                    pvbList.add(-999f);
+                }
+                if (Objects.nonNull(Ugm3Data)) {
+                    ugm3List.add(Optional.ofNullable(Ugm3Data.getValue()).orElse(new BigDecimal(-999)).floatValue());
+                } else {
+                    ugm3List.add(-999f);
                 }
             }
         }
@@ -478,32 +541,106 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 
         //查询voc数据
         VocTemp vocTemp = sailInfoConverter.vocParamConvert(vocParam);
-        Integer durationId = gpsInstrumentOut.getDurationid();
+        Integer gpsDurationId = gpsInstrumentOut.getDurationid();
         ArrayList<Integer> instrumentids = new ArrayList<>();
         //只查询gps（经纬度）
         instrumentids.add(Constants.INTEGER_5);
-        List<Data> dataList = getVocData(durationId, instrumentids, vocTemp);
+        vocTemp.setInstrumentids(instrumentids);
+        vocTemp.setDurationid(gpsDurationId);
+        List<Data> dataList = getVocData(vocTemp);
+        Map<Long, List<Data>> dataMap = dataList.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
 
         //查询TvOC等四个衍生数据
-        List<DataDerived> dataDeriveds = getDerivedsVocData(durationId, instrumentids, vocTemp);
+        List<DataDerived> dataDeriveds = null;
+        Map<Long, List<DataDerived>> dataDerivedMap = dataDeriveds.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
+        //排序
+        dataDerivedMap = sortByKey(dataDerivedMap, false);
+        //初始化结果
+        List<Long> timeAry = new LinkedList<>();
+        List<List<Float>> ptAry = new LinkedList<>();
+        List<List<Float>> comAry = new LinkedList<>();
 
-        return null;
+        for (Map.Entry<Long, List<DataDerived>> oneDataDerivedMap : dataDerivedMap.entrySet()) {
+            Long key = oneDataDerivedMap.getKey();
+            List<DataDerived> value = oneDataDerivedMap.getValue();
+            //按照type排序
+            value.sort(Comparator.comparing(DataDerived::getType));
+
+            //取到data表中相同时间点的经纬度信息
+            List<Data> lonlatList = dataMap.get(key);
+            //只有当经纬度都存在的时候才会保留当前的时间数据
+            if (CollectionUtils.isNotEmpty(lonlatList) && lonlatList.size() >= Constants.INTEGER_2) {
+
+            }
+
+            List<Float> lonLatList = new LinkedList<>();
+            List<Float> parameterValueList = new LinkedList<>();
+
+            lonLatList.add(0f);
+            ptAry.add(lonLatList);
+            comAry.add(parameterValueList);
+        }
+        VocComposeInfoOut vocComposeInfoOut = VocComposeInfoOut.builder()
+                .timeAry(timeAry)
+                .ptAry(ptAry)
+                .comAry(comAry)
+                .build();
+        return vocComposeInfoOut;
+    }
+
+    @Override
+    public LatestBusInfoOut queryLatestBusStatus(BusParam busParam) {
+        //根据车查询任务信息
+        List<Sail> sails = vocRepository.querySailStatus(Arrays.asList(busParam.getStationCode()));
+        Sail sail = null;
+        //sailing 1表示在走航中,0表示结束走航，null表示没有行走记录
+        Integer sailing = null;
+        if (CollectionUtils.isNotEmpty(sails)) {
+            //首先筛选endTime为空的数据，为空的就默认取结束时间为空的第一个
+            List<Sail> noEndTimes = sails.stream().filter(item -> Objects.isNull(item.getEndTime())).collect(Collectors.toList());
+            if (CollectionUtils.isNotEmpty(noEndTimes)) {
+                sail = noEndTimes.get(0);
+                sailing = 1;
+            } else {
+                sail = sails.get(0);
+                sailing = 0;
+            }
+        }
+        LatestBusInfoOut latestBusInfoOut = sailInfoConverter.busInfoVonvert(sail);
+        latestBusInfoOut.setSailing(sailing);
+        return latestBusInfoOut;
     }
 
     /**
      * 查询voc衍生数据，表data_derived
      *
-     * @param durationId
-     * @param instrumentids
-     * @param vocTemp
+     * @param vocDerviedTemp
      * @return java.util.List<com.clear.entity.DataDerived>
      * @author 3Clear1
      * @date 2020/8/19 13:41
      **/
-    private List<DataDerived> getDerivedsVocData(Integer durationId, ArrayList<Integer> instrumentids, VocTemp vocTemp) {
-//        vocTemp.setInstrumentids(instrumentids);
-//        vocTemp.setDurationid(durationid);
-//        return vocRepository.queryDerivedsVocData(vocTemp);
-        return null;
+    private List<DataDerived> getDerivedsVocData(VocDerviedTemp vocDerviedTemp) {
+        return vocRepository.queryDerivedsVocData(vocDerviedTemp);
+    }
+
+    /**
+     * 根据map的key排序
+     *
+     * @param map
+     * @param isDesc 是否降序，true：降序，false：升序
+     * @return java.util.Map<K, V>
+     * @author 3Clear1
+     * @date 2020/8/19 17:46
+     **/
+    public static <K extends Comparable<? super K>, V> Map<K, V> sortByKey(Map<K, V> map, boolean isDesc) {
+        Map<K, V> result = Maps.newLinkedHashMap();
+        if (isDesc) {
+            map.entrySet().stream().sorted(Map.Entry.<K, V>comparingByKey().reversed())
+                    .forEachOrdered(e -> result.put(e.getKey(), e.getValue()));
+        } else {
+            map.entrySet().stream().sorted(Map.Entry.<K, V>comparingByKey())
+                    .forEachOrdered(e -> result.put(e.getKey(), e.getValue()));
+        }
+        return result;
     }
 }

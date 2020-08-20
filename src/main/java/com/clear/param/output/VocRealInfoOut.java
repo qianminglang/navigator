@@ -18,7 +18,7 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VocHistoryInfoOut {
+public class VocRealInfoOut {
     private Long time;
     private List<Float> pt;
     private List<Float> dataAry;

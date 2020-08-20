@@ -18,10 +18,10 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class VocRealTimeInfoOut {
+public class VocHisTimeInfoOut {
     private List<Long> timeAry;
     private List<List<Float>> ptAry;
-    private List<List<Float>> dataAry;
-
-
+    private List<List<Float>> dataAryPVB;
+    private List<List<Float>> dataAryUgm3;
+    private List<List<Float>> dataAryZhenDuan;
 }

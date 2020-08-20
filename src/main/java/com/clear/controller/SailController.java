@@ -2,6 +2,7 @@ package com.clear.controller;
 
 
 import com.clear.param.Response;
+import com.clear.param.input.BusParam;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.input.VocHistoryParam;
 import com.clear.param.input.VocParam;
@@ -50,10 +51,10 @@ public class SailController {
      * @author 3Clear1
      * @date 2020/8/17 18:45
      **/
-    @PostMapping("/queryRealTimeVocData")
+    @PostMapping("/queryHistoryVocData")
     @ResponseBody
-    public Response<VocRealTimeInfoOut> queryRealTimeVocData(@RequestBody VocParam vocParam) {
-        VocRealTimeInfoOut vocInfoOut = sailService.queryRealTimeVocData(vocParam);
+    public Response<VocHisTimeInfoOut> queryHistoryVocData(@RequestBody VocParam vocParam) {
+        VocHisTimeInfoOut vocInfoOut = sailService.queryHisVocData(vocParam);
         return Response.SUCCESS(vocInfoOut);
     }
 
@@ -65,20 +66,21 @@ public class SailController {
      * @author 3Clear1
      * @date 2020/8/17 18:45
      **/
-    @PostMapping("/queryHistoryVocData")
+    @PostMapping("/queryRealTimeVocData")
     @ResponseBody
-    public Response<List<VocHistoryInfoOut>> queryHistoryVocData(@RequestBody VocParam vocParam) {
-        List<VocHistoryInfoOut> vocInfoOut = sailService.queryHistoryVocData(vocParam);
+    public Response<List<VocRealInfoOut>> queryRealTimeVocData(@RequestBody VocParam vocParam) {
+        List<VocRealInfoOut> vocInfoOut = sailService.queryRealVocData(vocParam);
         return Response.SUCCESS(vocInfoOut);
     }
 
 
     /**
      * 查询voc历史走航列表
+     *
+     * @param vocHistoryParam
+     * @return com.clear.param.Response<java.util.List < com.clear.param.output.VocHistoryOut>>
      * @author 3Clear1
      * @date 2020/8/18 14:31
-      * @param vocHistoryParam
-     * @return com.clear.param.Response<java.util.List<com.clear.param.output.VocHistoryOut>>
      **/
     @PostMapping("/queryHistoryList")
     @ResponseBody
@@ -89,15 +91,31 @@ public class SailController {
 
     /**
      * 查询voc计算结果，查询data_derived表
-     * @author 3Clear1
-     * @date 2020/8/19 11:24
+     *
      * @param vocParam
      * @return com.clear.param.Response<java.lang.Object>
+     * @author 3Clear1
+     * @date 2020/8/19 11:24
      **/
     @PostMapping("/queryComposeVocDate")
     @ResponseBody
-    public Response<Object> queryComposeVocDate(@RequestBody VocParam vocParam){
+    public Response<Object> queryComposeVocDate(@RequestBody VocParam vocParam) {
         VocComposeInfoOut vocComposeInfoOut = sailService.queryComposeVocDate(vocParam);
         return Response.SUCCESS(vocComposeInfoOut);
+    }
+
+    /**
+     * 根据车id查询当前车最新任务的状态
+     *
+     * @param busParam
+     * @return com.clear.param.Response<java.lang.Object>
+     * @author 3Clear1
+     * @date 2020/8/20 13:47
+     **/
+    @PostMapping("/queryLatestBusStatus")
+    @ResponseBody
+    public Response<LatestBusInfoOut> queryLatestBusStatus(@RequestBody BusParam busParam) {
+        LatestBusInfoOut latestBusInfoOut = sailService.queryLatestBusStatus(busParam);
+        return Response.SUCCESS(latestBusInfoOut);
     }
 }
