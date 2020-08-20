@@ -12,7 +12,7 @@ import java.io.Serializable;
  * Version 1.0
  **/
 @Data
-public class Response<T> implements Serializable {
+public class Response<T> extends TimeOutPut implements Serializable {
 
     private static final long serialVersionUID = 3403459610630116268L;
 

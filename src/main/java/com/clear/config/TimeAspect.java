@@ -1,15 +1,17 @@
 package com.clear.config;
 
+import com.clear.param.Response;
 import lombok.extern.slf4j.Slf4j;
-import org.aspectj.lang.annotation.AfterReturning;
-import org.aspectj.lang.annotation.Aspect;
-import org.aspectj.lang.annotation.Before;
-import org.aspectj.lang.annotation.Pointcut;
+import org.aspectj.lang.ProceedingJoinPoint;
+import org.aspectj.lang.annotation.*;
 import org.springframework.stereotype.Component;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Date;
+
+import static cn.hutool.core.date.DateTime.now;
 
 /**
  * ClassName TimeAspect
@@ -45,8 +47,19 @@ public class TimeAspect {
         log.info("调用路径:,{}", request.getRequestURL().toString());
     }
 
-    @AfterReturning(pointcut = "log()")
-    public void doAfterReturning() {
+    @Around("log()")
+    public Object around(ProceedingJoinPoint pjp) throws Throwable {
+        Response response = (Response) pjp.proceed();
+        //改变返回值
+        response.setStartTime(new Date(startTime.get()));
+        response.setEndTime(now());
+        response.setDuration((System.currentTimeMillis() - startTime.get()) + "ms");
+        return response;
+    }
+
+
+    @AfterReturning(returning = "ret", pointcut = "log()")
+    public void doAfterReturning(Object ret) {
         log.info("方法调用时间:{}", (System.currentTimeMillis() - startTime.get()) + "ms");
     }
 
