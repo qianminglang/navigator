@@ -1,5 +1,6 @@
 package com.clear.service.impl;
 
+import cn.hutool.crypto.digest.BCrypt;
 import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.clear.converter.input.UserInfoConverter;
 import com.clear.entity.SysUser;
@@ -13,7 +14,6 @@ import javax.annotation.Resource;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 /**
  * ClassName UserInfoServiceImpl
@@ -43,32 +43,27 @@ public class UserInfoServiceImpl implements UserInfoService {
             return resultMap;
         }
 
-
-//        boolean flag = false;
-//        for (SysUser user : sysUsers) {
-//            //查询到的密码
-//            String userpwd = user.getUserpwd();
-//            //入参密码
-//            String passWord = loginParam.getPassWord();
-//            flag = BCrypt.checkpw(passWord, userpwd);
-//            if(flag){
-//                break;
-//            }
-//        }
-
-        //TODO 还未实现密码加密密码加密
-//        String password = stringEncryptor.encrypt(userInfoDto.getPassWord());
-        String password = sysUser.getUserpwd();
+        String userid = "";
+        boolean flag = false;
+        for (SysUser user : sysUsers) {
+            //查询到的密码
+            String userpwd = user.getUserpwd();
+            //入参密码
+            String passWord = loginParam.getPassWord();
+            flag = BCrypt.checkpw(passWord, userpwd);
+            userid = user.getUserid();
+            if (flag) {
+                break;
+            }
+        }
         //根据用户查询出来的用户匹配密码有没有正确的
-        List<SysUser> sysUserList = sysUsers.stream().filter(e -> e.getUserpwd().equals(password)).collect(Collectors.toList());
-        if (CollectionUtils.isEmpty(sysUserList)) {
-            resultMap.put("message", "当前用户密码错误");
-        } else {
+        if (flag) {
             String token = TokenUtil.sign(loginParam);
-            String userid = sysUserList.get(0).getUserid();
             resultMap.put("message", "登录成功");
             resultMap.put("token", token);
             resultMap.put("userid", userid);
+        } else {
+            resultMap.put("message", "当前用户密码错误");
         }
         return resultMap;
     }

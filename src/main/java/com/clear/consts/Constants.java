@@ -47,4 +47,6 @@ public class Constants {
     public static final Integer INTEGER_150 = 150;
     public static final Integer INTEGER_0 = 0;
     public static final Integer INTEGER_60 = 60;
+    public static final Float FLOAT_N_999 = -999F;
+    public static final Float FLOAT_0 = 0F;
 }

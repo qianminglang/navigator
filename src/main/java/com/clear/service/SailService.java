@@ -39,15 +39,6 @@ public interface SailService extends IService<Sail> {
      **/
     VocHisTimeInfoOut queryHisVocData(VocParam vocParam);
 
-    /**
-     * 查询voc历史数据
-     *
-     * @param vocParam
-     * @return com.clear.param.output.VocInfoOut
-     * @author 3Clear1
-     * @date 2020/8/18 16:56
-     **/
-    List<VocRealInfoOut> queryRealVocData(VocParam vocParam);
 
     /**
      * 查询voc历史走航列表
@@ -58,16 +49,6 @@ public interface SailService extends IService<Sail> {
      * @date 2020/8/18 14:30
      **/
     List<VocHistoryOut> queryHistoryList(VocHistoryParam vocHistoryParam);
-
-    /**
-     * 查询voc计算结果，查询data_derived表
-     *
-     * @param vocParam
-     * @return com.clear.param.output.VocComposeInfoOut
-     * @author 3Clear1
-     * @date 2020/8/19 11:25
-     **/
-    VocComposeInfoOut queryComposeVocDate(VocParam vocParam);
 
     /**
      * 查询当前车最新任务的状态

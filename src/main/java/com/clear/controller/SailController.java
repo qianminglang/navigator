@@ -58,21 +58,6 @@ public class SailController {
         return Response.SUCCESS(vocInfoOut);
     }
 
-    /**
-     * 查询车下面的实时历史数据
-     *
-     * @param vocParam
-     * @return com.clear.param.Response<com.clear.param.output.VocInfoOut>
-     * @author 3Clear1
-     * @date 2020/8/17 18:45
-     **/
-    @PostMapping("/queryRealTimeVocData")
-    @ResponseBody
-    public Response<List<VocRealInfoOut>> queryRealTimeVocData(@RequestBody VocParam vocParam) {
-        List<VocRealInfoOut> vocInfoOut = sailService.queryRealVocData(vocParam);
-        return Response.SUCCESS(vocInfoOut);
-    }
-
 
     /**
      * 查询voc历史走航列表
@@ -87,21 +72,6 @@ public class SailController {
     public Response<List<VocHistoryOut>> queryHistoryList(@RequestBody VocHistoryParam vocHistoryParam) {
         List<VocHistoryOut> vocHistoryOutList = sailService.queryHistoryList(vocHistoryParam);
         return Response.SUCCESS(vocHistoryOutList);
-    }
-
-    /**
-     * 查询voc计算结果，查询data_derived表
-     *
-     * @param vocParam
-     * @return com.clear.param.Response<java.lang.Object>
-     * @author 3Clear1
-     * @date 2020/8/19 11:24
-     **/
-    @PostMapping("/queryComposeVocDate")
-    @ResponseBody
-    public Response<Object> queryComposeVocDate(@RequestBody VocParam vocParam) {
-        VocComposeInfoOut vocComposeInfoOut = sailService.queryComposeVocDate(vocParam);
-        return Response.SUCCESS(vocComposeInfoOut);
     }
 
     /**

@@ -1,9 +1,8 @@
 package com.clear.jasypt;
 
-import org.jasypt.encryption.StringEncryptor;
+import cn.hutool.crypto.digest.BCrypt;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.junit4.SpringRunner;
 
 /**
@@ -18,13 +17,14 @@ import org.springframework.test.context.junit4.SpringRunner;
 @RunWith(SpringRunner.class)
 public class GeneratePassWordTest {
 
-	@Autowired
-	StringEncryptor encryptor;
-
 	@Test
 	public void getPassWord() {
-		String passWord = encryptor.encrypt("admin");
-		System.out.println(passWord);
+		boolean flag = BCrypt.checkpw("3clear11", "$2a$12$b7Pro5EOQXDqjs4w3asuheu0TgYzekBlxdMNzua1hTR5Ka3k78aOu");
+		boolean xixi = BCrypt.checkpw("sdsd", "$2a$12$b7Pro5EOQXDqjs4w3asuheu0TgYzekBlxdMNzua1hTR5Ka3k78aOu");
+		System.out.println(flag);
+		System.out.println(xixi);
 	}
+
+
 
 }
