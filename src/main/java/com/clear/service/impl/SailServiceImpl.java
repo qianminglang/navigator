@@ -102,7 +102,9 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         staticMap.put("206", "N,N-二甲基甲酰胺");
         staticMap.put("207", "异丙醇");
         staticMap.put("208", "丙炔腈");
+        staticMap.put("211", "海拔");
 
+//        44,47,56,64,72,83,87,94,124,126,150,163,176,178,188,198,202,203,204,205,206,207,209,210
 
         EnStaticMap.put("31", "经度");
         EnStaticMap.put("32", "纬度");
@@ -137,6 +139,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         EnStaticMap.put("206", "EJJJXA");
         EnStaticMap.put("207", "YBC");
         EnStaticMap.put("208", "BQQ");
+        EnStaticMap.put("211", "HB");
     }
 
 
@@ -327,8 +330,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 //                //只需要取出排序后的value值,如果是null就置为-999
 //                zhenDuanList = dataDerivedOneTime.stream().map(e -> Optional.ofNullable(e.getValue()).orElse(new BigDecimal(-999)).floatValue()).collect(Collectors.toList());
             }
-            if (Objects.nonNull(lonLatList)) {
-                lonLatList.add(0f);
+            if (CollectionUtils.isNotEmpty(lonLatList)) {
                 timeAry.add(time);
                 ptAry.add(lonLatList);
                 dataAryPVB.add(pvbList);
@@ -466,27 +468,55 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
      * @date 2020/8/20 9:35
      **/
     private void getParameterResult(List<Integer> parameters, List<Data> groupData, List<Float> lonLatList, List<Float> pvbList, List<DataVoc> oneTimeUgm3Data, List<Float> ugm3List) {
+
+        Map<Integer, Data> dataMap = groupData.stream().collect(Collectors.toMap(Data::getParameterid, e -> e, (oldValue, newValue) -> newValue));
+        //如果缺少经纬度直接返回
+        boolean containsLonKey = dataMap.containsKey(Constants.INTEGER_31);
+        boolean containsLatKey = dataMap.containsKey(Constants.INTEGER_32);
+        if (!containsLonKey || !containsLatKey) {
+            return;
+        }
+
         //当经纬度有一个不存在的时候lonLatList就置位null，方法接受到lonLatList为null的时候则移除当前时间的数据
         groupData.sort(Comparator.comparing(Data::getParameterid));
         Map<Integer, DataVoc> Ugm3DataMap = new HashMap<>();
         if (Objects.nonNull(oneTimeUgm3Data)) {
             Ugm3DataMap = oneTimeUgm3Data.stream().collect(Collectors.toMap(DataVoc::getParameterid, e -> e, (oldValue, newValue) -> newValue));
         }
-        Map<Integer, Data> dataMap = groupData.stream().collect(Collectors.toMap(Data::getParameterid, e -> e, (oldValue, newValue) -> newValue));
+
+
+
         for (String key : staticMap.keySet()) {
             DataVoc Ugm3Data = Ugm3DataMap.get(Integer.valueOf(key));
             Data data = dataMap.get(Integer.valueOf(key));
             if (Constants.INTEGER_31.equals(Integer.valueOf(key))) {
                 if (Objects.nonNull(data)) {
-                    lonLatList.add(data.getValue().floatValue());
+                    float v = data.getValue().floatValue();
+                    if (v <= Constants.INTEGER_150 || v >= Constants.INTEGER_70) {
+                        lonLatList.add(v);
+                    } else {
+                        lonLatList = null;
+                    }
                 } else {
                     lonLatList = null;
                 }
             } else if (Constants.INTEGER_32.equals(Integer.valueOf(key))) {
                 if (Objects.nonNull(data)) {
-                    lonLatList.add(data.getValue().floatValue());
+                    float v = data.getValue().floatValue();
+                    if (v <= Constants.INTEGER_60 || v >= Constants.INTEGER_0) {
+                        lonLatList.add(v);
+                    } else {
+                        lonLatList = null;
+                    }
                 } else {
                     lonLatList = null;
+                }
+            } else if (Constants.INTEGER_211.equals(Integer.valueOf(key))) {
+                if (Objects.nonNull(data)) {
+                    float v = data.getValue().floatValue();
+                    lonLatList.add(v);
+                } else {
+                    lonLatList.add(-999f);
                 }
             } else {
                 if (Objects.nonNull(data)) {
@@ -499,6 +529,9 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 } else {
                     ugm3List.add(-999f);
                 }
+            }
+            if (Objects.isNull(lonLatList)) {
+                break;
             }
         }
     }

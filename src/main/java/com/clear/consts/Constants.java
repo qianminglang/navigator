@@ -40,4 +40,11 @@ public class Constants {
     public static final Integer INTEGER_31 = 31;
 
     public static final Integer INTEGER_32 = 32;
+    public static final Integer INTEGER_211 = 211;
+
+    public static final Integer INTEGER_70 = 70;
+
+    public static final Integer INTEGER_150 = 150;
+    public static final Integer INTEGER_0 = 0;
+    public static final Integer INTEGER_60 = 60;
 }

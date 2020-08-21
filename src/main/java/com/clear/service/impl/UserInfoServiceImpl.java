@@ -51,20 +51,21 @@ public class UserInfoServiceImpl implements UserInfoService {
 //            //入参密码
 //            String passWord = loginParam.getPassWord();
 //            flag = BCrypt.checkpw(passWord, userpwd);
+//            if(flag){
+//                break;
+//            }
 //        }
-
 
         //TODO 还未实现密码加密密码加密
 //        String password = stringEncryptor.encrypt(userInfoDto.getPassWord());
         String password = sysUser.getUserpwd();
         //根据用户查询出来的用户匹配密码有没有正确的
         List<SysUser> sysUserList = sysUsers.stream().filter(e -> e.getUserpwd().equals(password)).collect(Collectors.toList());
-        String userid = sysUserList.get(0).getUserid();
-
         if (CollectionUtils.isEmpty(sysUserList)) {
             resultMap.put("message", "当前用户密码错误");
         } else {
             String token = TokenUtil.sign(loginParam);
+            String userid = sysUserList.get(0).getUserid();
             resultMap.put("message", "登录成功");
             resultMap.put("token", token);
             resultMap.put("userid", userid);

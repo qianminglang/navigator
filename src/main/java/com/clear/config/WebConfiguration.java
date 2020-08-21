@@ -52,7 +52,7 @@ public class WebConfiguration implements WebMvcConfigurer {
     /**
      * 配置拦截器、拦截路径
      * 每次请求到拦截的路径，就会去执行拦截器中的方法
-     * @param configurer
+     * @param registry
      */
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
