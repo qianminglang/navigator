@@ -20,8 +20,6 @@ import java.util.Date;
 public class OneVocParam {
     //因子
     private Integer parameterid;
-    //设备
-    private Integer instrumentid;
     //车
     private String stationcode;
     //开始时间

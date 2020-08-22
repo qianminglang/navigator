@@ -223,4 +223,19 @@
             </if>
         </where>
     </select>
+
+    <select id="queryParametersBySailIds" resultType="com.clear.entity.SailParameter"
+        parameterType="java.util.List"
+    >
+        select sail_id,parameterid
+        from sail_parameter
+        <where>
+            <if test="sailIds!=null and sailIds.size>0">
+                and sail_id in
+                <foreach collection="sailIds" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
 </mapper>

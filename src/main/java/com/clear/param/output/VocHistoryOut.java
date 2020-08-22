@@ -6,6 +6,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.util.Date;
+import java.util.List;
 
 /**
  * ClassName UserInfoOut
@@ -18,7 +19,7 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VocHistoryOut {
-    private Long taskId;
+    private Integer taskId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date timeS;
     private String startUserId;
@@ -28,5 +29,5 @@ public class VocHistoryOut {
     private String endUserId;
     private String endUserName;
     private String busID;
-
+    private List<Integer> itemAry;
 }

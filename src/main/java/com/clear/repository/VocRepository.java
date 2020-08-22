@@ -114,4 +114,13 @@ public interface VocRepository {
      * @return java.util.List<com.clear.entity.Data>
      **/
     List<Data> queryOneVodData(OneVocParamTemp oneVocParamTemp);
+
+    /**
+     * 根据认为ids查询sail_parameter表
+     * @author 3Clear1
+     * @date 2020/8/22 16:47
+      * @param sailIds
+     * @return java.util.List<com.clear.entity.SailParameter>
+     **/
+    List<SailParameter> queryParametersBySailIds(List<Integer> sailIds);
 }

@@ -7,6 +7,7 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * ClassName CurTask
@@ -21,9 +22,10 @@ import java.time.LocalDateTime;
 @AllArgsConstructor
 @Builder
 public class CurTask {
-    private String id;
+    private Integer id;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime timeS;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime timeE;
+    private List<Integer> itemAry;
 }

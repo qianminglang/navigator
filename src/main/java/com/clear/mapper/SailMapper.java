@@ -124,4 +124,13 @@ public interface SailMapper extends BaseMapper<Sail> {
      * @return java.util.List<com.clear.entity.Data>
      **/
     List<Data> queryOneVodData(@Param("item")OneVocParamTemp oneVocParamTemp);
+
+    /**
+     * 根据认为ids查询sail_parameter表
+     * @author 3Clear1
+     * @date 2020/8/22 16:43
+      * @param sailIds
+     * @return java.util.List<com.clear.entity.SailParameter>
+     **/
+    List<SailParameter> queryParametersBySailIds(@Param("sailIds") List<Integer> sailIds);
 }

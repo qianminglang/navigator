@@ -78,4 +78,9 @@ public class VocRepositoryImpl implements VocRepository {
     public List<Data> queryOneVodData(OneVocParamTemp oneVocParamTemp) {
         return sailMapper.queryOneVodData(oneVocParamTemp);
     }
+
+    @Override
+    public List<SailParameter> queryParametersBySailIds(List<Integer> sailIds) {
+        return sailMapper.queryParametersBySailIds(sailIds);
+    }
 }
