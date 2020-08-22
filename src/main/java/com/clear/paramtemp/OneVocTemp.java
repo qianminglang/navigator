@@ -19,11 +19,11 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VocTemp {
+public class OneVocTemp {
 
     private String stationcode;
 
-    private List<Integer> parameterids;
+    private Integer parameterid;
 
     private Integer durationid;
 

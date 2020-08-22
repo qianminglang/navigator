@@ -7,17 +7,12 @@ import com.clear.converter.input.SailInfoConverter;
 import com.clear.entity.*;
 import com.clear.exception.ClearArgumentException;
 import com.clear.mapper.SailMapper;
-import com.clear.param.input.BusParam;
-import com.clear.param.input.UserIdParam;
-import com.clear.param.input.VocHistoryParam;
-import com.clear.param.input.VocParam;
+import com.clear.param.input.*;
+import com.clear.param.output.*;
 import com.clear.param.output.Param.CurTask;
 import com.clear.param.output.Param.Equ;
 import com.clear.param.output.Param.Item;
-import com.clear.param.output.*;
-import com.clear.paramtemp.SailParamTemp;
-import com.clear.paramtemp.VocDerviedTemp;
-import com.clear.paramtemp.VocTemp;
+import com.clear.paramtemp.*;
 import com.clear.repository.UserInfoRepository;
 import com.clear.repository.VocRepository;
 import com.clear.service.SailService;
@@ -41,7 +36,7 @@ import java.util.stream.Collectors;
  */
 @Service
 public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements SailService {
-    private static final Map<String, String> staticMap = new LinkedHashMap();
+    private static final Map<Integer, String> staticMap = new LinkedHashMap();
     private static final Map<Integer, String> staticDerivedMap = new LinkedHashMap();
     private static final Map EnStaticMap = new LinkedHashMap();
     private static final DateTimeFormatter dateTimeFormatter = Constants.dateTimeFormatter;
@@ -69,77 +64,77 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         staticDerivedMap.put(7, "SOAP总和");
 
 
-        staticMap.put("44", "茚");
-        staticMap.put("31", "经度");
-        staticMap.put("32", "纬度");
-        staticMap.put("35", "硝基苯");
-        staticMap.put("41", "1,2,4-三甲苯");
-        staticMap.put("47", "萘");
-        staticMap.put("52", "硝基甲苯");
-        staticMap.put("56", "α-蒎烯");
-        staticMap.put("61", "2-丁酮");
-        staticMap.put("64", "异戊二烯");
-        staticMap.put("72", "二甲基硫");
-        staticMap.put("75", "乙醛");
-        staticMap.put("76", "乙腈");
-        staticMap.put("83", "苯");
-        staticMap.put("87", "丙酮");
-        staticMap.put("88", "甲醇");
-        staticMap.put("94", "乙醇");
-        staticMap.put("123", "甲醛");
-        staticMap.put("124", "3-糠醛");
-        staticMap.put("163", "吡啶");
-        staticMap.put("174", "苯酚");
-        staticMap.put("176", "甲苯");
-        staticMap.put("178", "二甲苯");
-        staticMap.put("186", "丙烯腈");
-        staticMap.put("188", "丙烯醛");
-        staticMap.put("197", "苯甲腈");
-        staticMap.put("198", "苯乙烯");
-        staticMap.put("203", "氯苯");
-        staticMap.put("204", "4-甲基-2-戊酮");
-        staticMap.put("205", "乙酸乙酯");
-        staticMap.put("206", "N,N-二甲基甲酰胺");
-        staticMap.put("207", "异丙醇");
-        staticMap.put("208", "丙炔腈");
-        staticMap.put("211", "海拔");
+        staticMap.put(44, "茚");
+        staticMap.put(31, "经度");
+        staticMap.put(32, "纬度");
+        staticMap.put(35, "硝基苯");
+        staticMap.put(41, "1,2,4-三甲苯");
+        staticMap.put(47, "萘");
+        staticMap.put(52, "硝基甲苯");
+        staticMap.put(56, "α-蒎烯");
+        staticMap.put(61, "2-丁酮");
+        staticMap.put(64, "异戊二烯");
+        staticMap.put(72, "二甲基硫");
+        staticMap.put(75, "乙醛");
+        staticMap.put(76, "乙腈");
+        staticMap.put(83, "苯");
+        staticMap.put(87, "丙酮");
+        staticMap.put(88, "甲醇");
+        staticMap.put(94, "乙醇");
+        staticMap.put(123, "甲醛");
+        staticMap.put(124, "3-糠醛");
+        staticMap.put(163, "吡啶");
+        staticMap.put(174, "苯酚");
+        staticMap.put(176, "甲苯");
+        staticMap.put(178, "二甲苯");
+        staticMap.put(186, "丙烯腈");
+        staticMap.put(188, "丙烯醛");
+        staticMap.put(197, "苯甲腈");
+        staticMap.put(198, "苯乙烯");
+        staticMap.put(203, "氯苯");
+        staticMap.put(204, "4-甲基-2-戊酮");
+        staticMap.put(205, "乙酸乙酯");
+        staticMap.put(206, "N,N-二甲基甲酰胺");
+        staticMap.put(207, "异丙醇");
+        staticMap.put(208, "丙炔腈");
+        staticMap.put(211, "海拔");
 
 //        44,47,56,64,72,83,87,94,124,126,150,163,176,178,188,198,202,203,204,205,206,207,209,210
 
-        EnStaticMap.put("44", "YIN");
-        EnStaticMap.put("31", "经度");
-        EnStaticMap.put("32", "纬度");
-        EnStaticMap.put("35", "XJB");
-        EnStaticMap.put("41", "SJB");
-        EnStaticMap.put("47", "NAI");
-        EnStaticMap.put("52", "XJJB");
-        EnStaticMap.put("56", "PX");
-        EnStaticMap.put("61", "DT");
-        EnStaticMap.put("64", "YWEX");
-        EnStaticMap.put("72", "EJJL");
-        EnStaticMap.put("75", "YQUAN");
-        EnStaticMap.put("76", "YQ");
-        EnStaticMap.put("83", "BEN");
-        EnStaticMap.put("87", "BT");
-        EnStaticMap.put("88", "JC");
-        EnStaticMap.put("94", "YCH");
-        EnStaticMap.put("123", "JQ");
-        EnStaticMap.put("124", "TQ");
-        EnStaticMap.put("163", "CD");
-        EnStaticMap.put("174", "BF");
-        EnStaticMap.put("176", "JBEN");
-        EnStaticMap.put("178", "EJB");
-        EnStaticMap.put("186", "BXQ");
-        EnStaticMap.put("188", "BXQQ");
-        EnStaticMap.put("197", "BJQ");
-        EnStaticMap.put("198", "BYX");
-        EnStaticMap.put("203", "LB");
-        EnStaticMap.put("204", "JJ_WT");
-        EnStaticMap.put("205", "YSYZ");
-        EnStaticMap.put("206", "EJJJXA");
-        EnStaticMap.put("207", "YBC");
-        EnStaticMap.put("208", "BQQ");
-        EnStaticMap.put("211", "HB");
+        EnStaticMap.put(44, "YIN");
+        EnStaticMap.put(31, "经度");
+        EnStaticMap.put(32, "纬度");
+        EnStaticMap.put(35, "XJB");
+        EnStaticMap.put(41, "SJB");
+        EnStaticMap.put(47, "NAI");
+        EnStaticMap.put(52, "XJJB");
+        EnStaticMap.put(56, "PX");
+        EnStaticMap.put(61, "DT");
+        EnStaticMap.put(64, "YWEX");
+        EnStaticMap.put(72, "EJJL");
+        EnStaticMap.put(75, "YQUAN");
+        EnStaticMap.put(76, "YQ");
+        EnStaticMap.put(83, "BEN");
+        EnStaticMap.put(87, "BT");
+        EnStaticMap.put(88, "JC");
+        EnStaticMap.put(94, "YCH");
+        EnStaticMap.put(123, "JQ");
+        EnStaticMap.put(124, "TQ");
+        EnStaticMap.put(163, "CD");
+        EnStaticMap.put(174, "BF");
+        EnStaticMap.put(176, "JBEN");
+        EnStaticMap.put(178, "EJB");
+        EnStaticMap.put(186, "BXQ");
+        EnStaticMap.put(188, "BXQQ");
+        EnStaticMap.put(197, "BJQ");
+        EnStaticMap.put(198, "BYX");
+        EnStaticMap.put(203, "LB");
+        EnStaticMap.put(204, "JJ_WT");
+        EnStaticMap.put(205, "YSYZ");
+        EnStaticMap.put(206, "EJJJXA");
+        EnStaticMap.put(207, "YBC");
+        EnStaticMap.put(208, "BQQ");
+        EnStaticMap.put(211, "HB");
     }
 
 
@@ -234,9 +229,10 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
 
     @Override
     public VocHisTimeInfoOut queryHisVocData(VocParam vocParam) {
+        String stationCode = vocParam.getStationCode();
         //根据走航车编码查询voc的仪器编码，查询的是instrument表
         Instrument vocInstrument = Instrument.builder()
-                .stationcode(vocParam.getStationCode())
+                .stationcode(stationCode)
                 .model(Constants.VOC)
                 .build();
         Instrument vocInstrumentOutPut = getInstrument(vocInstrument);
@@ -244,9 +240,10 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             throw new ClearArgumentException("导航车查询的Voc设备为空");
         }
 
+
         //根据走航车编码查询GPS的仪器编码，查询的是instrument表
         Instrument gpsInstrument = Instrument.builder()
-                .stationcode(vocParam.getStationCode())
+                .stationcode(stationCode)
                 .model(Constants.GPS)
                 .build();
         Instrument gpsInstrumentOutPut = getInstrument(gpsInstrument);
@@ -288,9 +285,39 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         Map<Long, List<DataDerived>> dataDerivedMap = dataDeriveds.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
 
         //查询data_voc表，计算因子mg/立方米数据
+        //setParameterids设置为null，在数据库中表示查询所有因子
+        vocTemp.setParameterids(null);
         List<DataVoc> ugm3Data = getUgm3Data(vocTemp);
         Map<Long, List<DataVoc>> ugm3Map = ugm3Data.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
 
+        Map<Long, List<Data>> dateTimeListMap = dataList.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
+
+        //将查询到的数据封装成需要返回的结果样式
+        //设置经纬度有效值
+        LonLatRangeTemp lonLatRangeTemp = LonLatRangeTemp.builder()
+                .startLon(Constants.FLOAT_70)
+                .endLon(Constants.FLOAT_150)
+                .startLat(Constants.FLOAT_0)
+                .endLat(Constants.FLOAT_60)
+                .build();
+        VocHisTimeInfoOut vocInfoOut = getVocHisTimeInfoOut(staticMap, parameters, dataDerivedMap, ugm3Map, dateTimeListMap, lonLatRangeTemp);
+
+        return vocInfoOut;
+    }
+
+    /**
+     * 封装历史数据
+     *
+     * @param parameters
+     * @param dataDerivedMap
+     * @param ugm3Map
+     * @param dateTimeListMap
+     * @return com.clear.param.output.VocHisTimeInfoOut
+     * @author 3Clear1
+     * @date 2020/8/22 11:21
+     **/
+    private VocHisTimeInfoOut getVocHisTimeInfoOut(Map<Integer, String> parameterMap, List<Integer> parameters, Map<Long, List<DataDerived>> dataDerivedMap, Map<Long, List<DataVoc>> ugm3Map, Map<Long,
+            List<Data>> dateTimeListMap, LonLatRangeTemp lonLatRangeTemp) {
         //初始化结果
         List<Long> timeAry = new LinkedList<>();
         List<List<Float>> ptAry = new LinkedList<>();
@@ -298,7 +325,6 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         List<List<Float>> dataAryUgm3 = new LinkedList<>();
         List<List<Float>> dataAryZhenDuan = new LinkedList<>();
 
-        Map<Long, List<Data>> dateTimeListMap = dataList.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
         dateTimeListMap = sortByKey(dateTimeListMap, false);
         for (Map.Entry<Long, List<Data>> longListEntry : dateTimeListMap.entrySet()) {
             Long time = longListEntry.getKey();
@@ -311,7 +337,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             //根据每个时间点封装data（因子普通数据，单位pvb）表中数据,和data_voc（因子普通数据，单位毫克/立方米）的数据
             //根据每个时间点封装data_voc的数据
             List<DataVoc> oneTimeUgm3Data = ugm3Map.get(time);
-            getParameterResult(parameters, groupData, lonLatList, pvbList, oneTimeUgm3Data, ugm3List);
+            getParameterResult(parameterMap, parameters, groupData, lonLatList, pvbList, oneTimeUgm3Data, ugm3List, lonLatRangeTemp);
 
             //根据每个时间点封装data_derived（诊断量）表中数据
             List<DataDerived> dataDerivedOneTime = dataDerivedMap.get(time);
@@ -338,14 +364,15 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 dataAryZhenDuan.add(zhenDuanList);
             }
         }
-        VocHisTimeInfoOut vocInfoOut = VocHisTimeInfoOut.builder()
+
+
+        return VocHisTimeInfoOut.builder()
                 .timeAry(timeAry)
                 .ptAry(ptAry)
                 .dataAryPVB(dataAryPVB)
                 .dataAryUgm3(dataAryUgm3)
                 .dataAryZhenDuan(dataAryZhenDuan)
                 .build();
-        return vocInfoOut;
     }
 
     private List<DataVoc> getUgm3Data(VocTemp vocTemp) {
@@ -400,7 +427,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
      * @author 3Clear1
      * @date 2020/8/20 9:35
      **/
-    private void getParameterResult(List<Integer> parameters, List<Data> groupData, List<Float> lonLatList, List<Float> pvbList, List<DataVoc> oneTimeUgm3Data, List<Float> ugm3List) {
+    private void getParameterResult(Map<Integer, String> parameterMap, List<Integer> parameters, List<Data> groupData, List<Float> lonLatList, List<Float> pvbList, List<DataVoc> oneTimeUgm3Data,
+                                    List<Float> ugm3List, LonLatRangeTemp lonLatRangeTemp) {
 
         Map<Integer, Data> dataMap = groupData.stream().collect(Collectors.toMap(Data::getParameterid, e -> e, (oldValue, newValue) -> newValue));
         //如果缺少经纬度直接返回
@@ -418,13 +446,13 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         }
 
 
-        for (String key : staticMap.keySet()) {
-            DataVoc Ugm3Data = Ugm3DataMap.get(Integer.valueOf(key));
+        for (Integer key : parameterMap.keySet()) {
+            DataVoc Ugm3Data = Ugm3DataMap.get(key);
             Data data = dataMap.get(Integer.valueOf(key));
             if (Constants.INTEGER_31.equals(Integer.valueOf(key))) {
                 if (Objects.nonNull(data)) {
                     float v = data.getValue().floatValue();
-                    if (v <= Constants.INTEGER_150 || v >= Constants.INTEGER_70) {
+                    if (v <= lonLatRangeTemp.getEndLon() || v >= lonLatRangeTemp.getStartLon()) {
                         lonLatList.add(v);
                     } else {
                         lonLatList = null;
@@ -435,7 +463,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             } else if (Constants.INTEGER_32.equals(Integer.valueOf(key))) {
                 if (Objects.nonNull(data)) {
                     float v = data.getValue().floatValue();
-                    if (v <= Constants.INTEGER_60 || v >= Constants.INTEGER_0) {
+                    if (v <= lonLatRangeTemp.getEndLat() || v >= lonLatRangeTemp.getStartLat()) {
                         lonLatList.add(v);
                     } else {
                         lonLatList = null;
@@ -537,6 +565,103 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         LatestBusInfoOut latestBusInfoOut = sailInfoConverter.busInfoVonvert(sail);
         latestBusInfoOut.setSailing(sailing);
         return latestBusInfoOut;
+    }
+
+    @Override
+    public OneVocOutInfo queryOneVodData(OneVocParam oneVocParam) {
+        //因为传进来的设备比如说是voc，他只会查询voc的数据，但是我们必须要用到gps数据，
+        //所以还需要根据这辆车查询到对应的gps的设备id
+        //根据走航车编码查询GPS的仪器编码，查询的是instrument表
+        Instrument gpsInstrument = Instrument.builder()
+                .stationcode(oneVocParam.getStationcode())
+                .model(Constants.GPS)
+                .build();
+        Instrument gpsInstrumentOutPut = getInstrument(gpsInstrument);
+        if (Objects.isNull(gpsInstrumentOutPut)) {
+            throw new ClearArgumentException("导航车查询的GPS设备为空");
+        }
+
+        //查询data表数据
+        OneVocParamTemp oneVocParamTemp = sailInfoConverter.oneVocParamConvert(oneVocParam);
+        //入参除了传进来的参数，还需要加上经度，纬度和高层
+        oneVocParamTemp.setParameterids(Arrays.asList(oneVocParam.getParameterid(), Constants.INTEGER_31, Constants.INTEGER_32, Constants.INTEGER_211));
+        //设备id除了传进来的id，还要加上gps的id
+        Integer instrumentid = oneVocParam.getInstrumentid();
+        List<Integer> instrumentids = Arrays.asList(instrumentid, gpsInstrumentOutPut.getInstrumentid());
+        oneVocParamTemp.setInstrumentids(instrumentids);
+        List<Data> dataList = vocRepository.queryOneVodData(oneVocParamTemp);
+
+        //当返回结果为空直接返回
+        if (CollectionUtils.isEmpty(dataList)) {
+            return new OneVocOutInfo();
+        }
+        //查询到的数据根据时间分组
+        Map<Long, List<Data>> dateTimeListMap = dataList.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
+
+        //根据走航车编码查询voc的的频率
+        Instrument vocInstrument = Instrument.builder()
+                .stationcode(oneVocParam.getStationcode())
+                .model(Constants.VOC)
+                .build();
+        Instrument vocInstrumentOutPut = getInstrument(vocInstrument);
+        Integer durationid = vocInstrumentOutPut.getDurationid();
+
+        //查询TvOC等四个衍生数据
+        VocDerviedTemp vocDerviedTemp = VocDerviedTemp.builder()
+                .durationid(durationid)
+                .instrumentid(oneVocParam.getInstrumentid())
+                .startTime(oneVocParam.getStartTime())
+                .endTime(oneVocParam.getEndTime())
+                .build();
+        List<DataDerived> dataDeriveds = getDerivedsVocData(vocDerviedTemp);
+        Map<Long, List<DataDerived>> dataDerivedMap = dataDeriveds.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
+
+
+        //查询data_voc表，计算因子mg/立方米数据
+        VocTemp vocTemp = sailInfoConverter.oneUgm3Convert(oneVocParam);
+        vocTemp.setDurationid(durationid);
+        vocTemp.setInstrumentids(Arrays.asList(oneVocParam.getInstrumentid()));
+        vocTemp.setParameterids(Arrays.asList(oneVocParam.getParameterid()));
+        List<DataVoc> ugm3Data = getUgm3Data(vocTemp);
+        Map<Long, List<DataVoc>> ugm3Map = ugm3Data.stream().collect(Collectors.groupingBy(e -> Long.valueOf(dateTimeFormatter.format(e.getLst()))));
+
+        //将查询到的数据封装成需要返回的结果样式
+        LinkedHashMap<Integer, String> parameterMap = new LinkedHashMap<>();
+        parameterMap.put(31, "经度");
+        parameterMap.put(32, "纬度");
+        parameterMap.put(211, "高度");
+        parameterMap.put(oneVocParam.getParameterid(), "传入的因子");
+
+
+        //经纬度范围
+        LonLatRangeTemp lonLatRangeTemp = sailInfoConverter.lonLatRangeConvert(oneVocParam);
+
+
+        VocHisTimeInfoOut vocInfoOut = getVocHisTimeInfoOut(parameterMap, null, dataDerivedMap, ugm3Map, dateTimeListMap, lonLatRangeTemp);
+
+        List<Long> timeAry = vocInfoOut.getTimeAry();
+        List<List<Float>> ptAry = vocInfoOut.getPtAry();
+        List<List<Float>> dataAryPVB = vocInfoOut.getDataAryPVB();
+        List<List<Float>> dataAryUgm3 = vocInfoOut.getDataAryUgm3();
+        List<List<Float>> dataAryZhenDuan = vocInfoOut.getDataAryZhenDuan();
+        LinkedList<Float> PVB = new LinkedList<>();
+        LinkedList<Float> Ugm3 = new LinkedList<>();
+        for (List<Float> floats : dataAryPVB) {
+            PVB.add(floats.get(0));
+        }
+        for (List<Float> floats : dataAryUgm3) {
+            Ugm3.add(floats.get(0));
+        }
+
+        OneVocOutInfo oneVocInfoOut = OneVocOutInfo.builder()
+                .timeAry(timeAry)
+                .ptAry(ptAry)
+                .dataAryPVB(PVB)
+                .dataAryUgm3(Ugm3)
+                .dataAryZhenDuan(dataAryZhenDuan)
+                .build();
+
+        return oneVocInfoOut;
     }
 
     /**

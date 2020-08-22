@@ -5,6 +5,7 @@ import com.clear.mapper.SailMapper;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
+import com.clear.paramtemp.OneVocParamTemp;
 import com.clear.paramtemp.SailParamTemp;
 import com.clear.paramtemp.VocDerviedTemp;
 import com.clear.paramtemp.VocTemp;
@@ -71,5 +72,10 @@ public class VocRepositoryImpl implements VocRepository {
     @Override
     public List<DataVoc> getUgm3Data(VocTemp vocTemp) {
         return sailMapper.getUgm3Data(vocTemp);
+    }
+
+    @Override
+    public List<Data> queryOneVodData(OneVocParamTemp oneVocParamTemp) {
+        return sailMapper.queryOneVodData(oneVocParamTemp);
     }
 }

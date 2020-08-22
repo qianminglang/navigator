@@ -2,13 +2,13 @@ package com.clear.controller;
 
 
 import com.clear.param.Response;
-import com.clear.param.input.BusParam;
-import com.clear.param.input.UserIdParam;
-import com.clear.param.input.VocHistoryParam;
-import com.clear.param.input.VocParam;
+import com.clear.param.input.*;
 import com.clear.param.output.*;
 import com.clear.service.SailService;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import javax.annotation.Resource;
 import java.util.List;
@@ -37,7 +37,6 @@ public class SailController {
      * @date 2020/8/17 18:44
      **/
     @PostMapping("/userSite")
-    @ResponseBody
     public Response<List<SiteOut>> queryUserSite(@RequestBody UserIdParam userIdParam) {
         List<SiteOut> siteOutList = sailService.queryUserSite(userIdParam);
         return Response.SUCCESS(siteOutList);
@@ -52,7 +51,6 @@ public class SailController {
      * @date 2020/8/17 18:45
      **/
     @PostMapping("/queryHistoryVocData")
-    @ResponseBody
     public Response<VocHisTimeInfoOut> queryHistoryVocData(@RequestBody VocParam vocParam) {
         VocHisTimeInfoOut vocInfoOut = sailService.queryHisVocData(vocParam);
         return Response.SUCCESS(vocInfoOut);
@@ -68,7 +66,6 @@ public class SailController {
      * @date 2020/8/18 14:31
      **/
     @PostMapping("/queryHistoryList")
-    @ResponseBody
     public Response<List<VocHistoryOut>> queryHistoryList(@RequestBody VocHistoryParam vocHistoryParam) {
         List<VocHistoryOut> vocHistoryOutList = sailService.queryHistoryList(vocHistoryParam);
         return Response.SUCCESS(vocHistoryOutList);
@@ -83,9 +80,23 @@ public class SailController {
      * @date 2020/8/20 13:47
      **/
     @PostMapping("/queryLatestBusStatus")
-    @ResponseBody
     public Response<LatestBusInfoOut> queryLatestBusStatus(@RequestBody BusParam busParam) {
         LatestBusInfoOut latestBusInfoOut = sailService.queryLatestBusStatus(busParam);
         return Response.SUCCESS(latestBusInfoOut);
     }
+
+    /**
+     * 查询单因子在时间范围和经纬度范围内的数据
+     *
+     * @param oneVocParam
+     * @return com.clear.param.Response<com.clear.param.output.OneVocInfoOut>
+     * @author 3Clear1
+     * @date 2020/8/21 18:01
+     **/
+    @PostMapping("/queryOneVodData")
+    public Response<OneVocOutInfo> queryOneVodData(@RequestBody OneVocParam oneVocParam) {
+        OneVocOutInfo oneVodData = sailService.queryOneVodData(oneVocParam);
+        return Response.SUCCESS(oneVodData);
+    }
+
 }

@@ -5,9 +5,6 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.Date;
-import java.util.List;
-
 /**
  * ClassName UserInfo
  *
@@ -19,17 +16,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VocTemp {
+public class LonLatRangeTemp {
 
-    private String stationcode;
-
-    private List<Integer> parameterids;
-
-    private Integer durationid;
-
-    private List<Integer> instrumentids;
-
-    private Date startTime;
-
-    private Date endTime;
+    //开始经度
+    private Float startLon;
+    //结束经度
+    private Float endLon;
+    //开始纬度
+    private Float startLat;
+    //结束纬度
+    private Float endLat;
 }

@@ -2,10 +2,7 @@ package com.clear.service;
 
 import com.baomidou.mybatisplus.extension.service.IService;
 import com.clear.entity.Sail;
-import com.clear.param.input.BusParam;
-import com.clear.param.input.UserIdParam;
-import com.clear.param.input.VocHistoryParam;
-import com.clear.param.input.VocParam;
+import com.clear.param.input.*;
 import com.clear.param.output.*;
 
 import java.util.List;
@@ -59,4 +56,14 @@ public interface SailService extends IService<Sail> {
      * @date 2020/8/20 13:50
      **/
     LatestBusInfoOut queryLatestBusStatus(BusParam busParam);
+
+    /**
+     * 查询单因子在时间范围和经纬度范围内的数据
+     *
+     * @param oneVocParam
+     * @return com.clear.param.output.OneVocInfoOut
+     * @author 3Clear1
+     * @date 2020/8/21 18:00
+     **/
+    OneVocOutInfo queryOneVodData(OneVocParam oneVocParam);
 }

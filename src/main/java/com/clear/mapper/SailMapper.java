@@ -5,6 +5,7 @@ import com.clear.entity.*;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
+import com.clear.paramtemp.OneVocParamTemp;
 import com.clear.paramtemp.SailParamTemp;
 import com.clear.paramtemp.VocDerviedTemp;
 import com.clear.paramtemp.VocTemp;
@@ -114,4 +115,13 @@ public interface SailMapper extends BaseMapper<Sail> {
      * @date 2020/8/17 18:42
      **/
     List<DataVoc> getUgm3Data(@Param("item") VocTemp vocTemp);
+
+    /**
+     * 查询单因子在时间范围和经纬度范围内的数据
+     * @author 3Clear1
+     * @date 2020/8/22 10:37
+      * @param oneVocParamTemp
+     * @return java.util.List<com.clear.entity.Data>
+     **/
+    List<Data> queryOneVodData(@Param("item")OneVocParamTemp oneVocParamTemp);
 }

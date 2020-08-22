@@ -116,8 +116,11 @@
             <if test="item.stationcode!=null and item.stationcode!=''">
                 stationcode=#{item.stationcode}
             </if>
-            <if test="item.parameterid!=null and item.parameterid!=''">
-                and parameterid=#{item.parameterid}
+            <if test="item.parameterids!=null and item.parameterids.size>0">
+                and parameterid in
+                <foreach collection="item.parameterids" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
             </if>
             <if test="item.durationid!=null and item.durationid!=''">
                 and durationid=#{item.durationid}
@@ -167,9 +170,6 @@
             <if test="item.stationcode!=null and item.stationcode!=''">
                 stationcode=#{item.stationcode}
             </if>
-            <if test="item.parameterid!=null and item.parameterid!=''">
-                and parameterid=#{item.parameterid}
-            </if>
             <if test="item.durationid!=null and item.durationid!=''">
                 and durationid=#{item.durationid}
             </if>
@@ -179,11 +179,48 @@
             <if test="item.endTime!=null">
                 and lst &lt;=#{item.endTime}
             </if>
-            and instrumentid in
-            <foreach collection="item.instrumentids" item="item" index="index" open="(" separator="," close=")">
-                #{item}
-            </foreach>
-            order by lst
+            <if test="item.instrumentids!=null and item.instrumentids.size>0">
+                and instrumentid in
+                <foreach collection="item.instrumentids" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="item.parameterids!=null and item.parameterids.size>0">
+                and parameterid in
+                <foreach collection="item.parameterids" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="queryOneVodData"
+            parameterType="com.clear.paramtemp.OneVocParamTemp"
+            resultType="com.clear.entity.Data">
+        select parameterid,value,lst
+        from data
+        <where>
+            <if test="item.instrumentids!=null and item.instrumentids.size>0">
+                and instrumentid in
+                <foreach collection="item.instrumentids" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+            <if test="item.stationcode!=null and item.stationcode!=''">
+                and stationcode = #{item.stationcode}
+            </if>
+            <if test="item.startTime!=null">
+                and lst &gt;#{item.startTime}
+            </if>
+            <if test="item.endTime!=null">
+                and lst &lt;#{item.endTime}
+            </if>
+            <if test="item.parameterids!=null and item.parameterids.size>0 ">
+                and parameterid in
+                <foreach collection="item.parameterids" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
         </where>
     </select>
 </mapper>

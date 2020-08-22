@@ -4,9 +4,7 @@ import com.clear.entity.*;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
-import com.clear.paramtemp.SailParamTemp;
-import com.clear.paramtemp.VocDerviedTemp;
-import com.clear.paramtemp.VocTemp;
+import com.clear.paramtemp.*;
 
 import java.util.List;
 
@@ -107,4 +105,13 @@ public interface VocRepository {
      * @return java.util.List<com.clear.entity.DataVoc>
      **/
     List<DataVoc> getUgm3Data(VocTemp vocTemp);
+
+    /**
+     * 查询单因子在时间范围和经纬度范围内的数据
+     * @author 3Clear1
+     * @date 2020/8/22 10:37
+      * @param oneVocParamTemp
+     * @return java.util.List<com.clear.entity.Data>
+     **/
+    List<Data> queryOneVodData(OneVocParamTemp oneVocParamTemp);
 }

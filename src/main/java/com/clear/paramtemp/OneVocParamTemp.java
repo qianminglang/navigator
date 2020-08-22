@@ -19,15 +19,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Builder
-public class VocTemp {
+public class OneVocParamTemp {
 
-    private String stationcode;
 
     private List<Integer> parameterids;
-
-    private Integer durationid;
-
-    private List<Integer> instrumentids;
+    //设备
+    private  List<Integer> instrumentids;
+    //车
+    private String stationcode;
 
     private Date startTime;
 
