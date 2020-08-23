@@ -3,6 +3,7 @@ package com.clear.param.input;
 import com.clear.param.output.RequestParam;
 import com.clear.util.ParamUtil;
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,11 +21,18 @@ import java.util.Date;
 @NoArgsConstructor
 @AllArgsConstructor
 public class VocParam extends RequestParam {
+
+    @ApiModelProperty(value = "车辆id")
     private String stationCode;
+
+    @ApiModelProperty(value = "任务id")
     private Long sailId;
+
+    @ApiModelProperty(value = "开始时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
 
+    @ApiModelProperty(value = "结束时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date endTime;
 

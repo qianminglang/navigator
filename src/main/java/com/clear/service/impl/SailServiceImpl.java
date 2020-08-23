@@ -239,7 +239,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         Map<Long, List<Integer>> integerListMap = queryParametersBySailIds(Arrays.asList(sailId));
         List<Integer> parameterList = integerListMap.get(sailId);
         if (CollectionUtils.isEmpty(parameterList)) {
-            throw new ClearArgumentException("未查询到当前任务的配置因子的信息");
+            throw new ClearArgumentException("未查询到当前任务的配置因子的数据");
         }
 
         //将查询到的数据封装成需要返回的结果样式
@@ -250,6 +250,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .startLat(Constants.FLOAT_0)
                 .endLat(Constants.FLOAT_60)
                 .build();
+
+
         VocHisTimeInfoOut vocInfoOut = getVocHisTimeInfoOut(parameterList, parameters, dataDerivedMap, ugm3Map, dateTimeListMap, lonLatRangeTemp);
 
         return vocInfoOut;
@@ -268,6 +270,10 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
      **/
     private VocHisTimeInfoOut getVocHisTimeInfoOut(List<Integer> parameterList, List<Integer> parameters, Map<Long, List<DataDerived>> dataDerivedMap, Map<Long, List<DataVoc>> ugm3Map, Map<Long,
             List<Data>> dateTimeListMap, LonLatRangeTemp lonLatRangeTemp) {
+
+        //因为因子中不包含经纬度和高度，但是此处遍历的时候需要加上经纬度和高度
+        parameterList.addAll(Arrays.asList(Constants.INTEGER_31, Constants.INTEGER_32, Constants.INTEGER_211));
+
         //初始化结果
         List<Long> timeAry = new LinkedList<>();
         List<List<Float>> ptAry = new LinkedList<>();
@@ -391,8 +397,6 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             Ugm3DataMap = oneTimeUgm3Data.stream().collect(Collectors.toMap(DataVoc::getParameterid, e -> e, (oldValue, newValue) -> newValue));
         }
 
-        //因为因子中不包含经纬度和高度，但是此处遍历的时候需要加上经纬度和高度
-        parameterList.addAll(Arrays.asList(Constants.INTEGER_31, Constants.INTEGER_32, Constants.INTEGER_211));
 
         for (Integer key : parameterList) {
             DataVoc Ugm3Data = Ugm3DataMap.get(key);

@@ -1,6 +1,8 @@
 package com.clear.param.input;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -17,23 +19,31 @@ import java.util.Date;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel
 public class OneVocParam {
-    //因子
+    @ApiModelProperty(value = "因子")
     private Integer parameterid;
-    //车
+
+    @ApiModelProperty(value = "车id")
     private String stationcode;
-    //开始时间
+
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
+    @ApiModelProperty(value = "开始时间")
     private Date startTime;
-    //结束时间
+
+    @ApiModelProperty(value = "结束时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date endTime;
-    //开始经度
+
+    @ApiModelProperty(value = "开始经度")
     private Float startLon;
-    //结束经度
+
+    @ApiModelProperty(value = "结束经度")
     private Float endLon;
-    //开始纬度
+
+    @ApiModelProperty(value = "开始纬度")
     private Float startLat;
-    //结束纬度
+
+    @ApiModelProperty(value = "结束纬度")
     private Float endLat;
 }

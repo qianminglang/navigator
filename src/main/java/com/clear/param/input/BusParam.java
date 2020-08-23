@@ -1,5 +1,7 @@
 package com.clear.param.input;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -14,7 +16,9 @@ import lombok.NoArgsConstructor;
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
+@ApiModel
 public class BusParam {
 
+    @ApiModelProperty(value = "车辆id")
     private String stationCode;
 }

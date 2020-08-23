@@ -2,6 +2,8 @@ package com.clear.param.input;
 
 import com.clear.param.output.RequestParam;
 import com.clear.util.ParamUtil;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,7 +20,10 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ApiModel
 public class UserIdParam extends RequestParam {
+
+    @ApiModelProperty(value = "用户id")
     private String userId;
 
     @Override

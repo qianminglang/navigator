@@ -1,5 +1,7 @@
 package com.clear.param.output;
 
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -18,10 +20,21 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
+@ApiModel
 public class OneVocOutInfo {
+
+    @ApiModelProperty(value = "时间列表")
     private List<Long> timeAry;
+
+    @ApiModelProperty(value = "经度，纬度，海拔列表")
     private List<List<Float>> ptAry;
+
+    @ApiModelProperty(value = "voc的pvb数据")
     private List<Float> dataAryPVB;
+
+    @ApiModelProperty(value = "voc的ugm3数据")
     private List<Float> dataAryUgm3;
+
+    @ApiModelProperty(value = "voc的诊断量数据")
     private List<List<Float>> dataAryZhenDuan;
 }
