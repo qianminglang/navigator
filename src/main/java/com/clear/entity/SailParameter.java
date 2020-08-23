@@ -28,7 +28,7 @@ public class SailParameter implements Serializable {
     /**
      * 任务编号
      */
-    private Integer sailId;
+    private Long sailId;
 
     /**
      * 因子列表

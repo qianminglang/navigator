@@ -56,7 +56,7 @@ public interface VocRepository {
      * @author 3Clear1
      * @date 2020/8/17 20:30
      **/
-    Instrument queryInstrument(Instrument instrument);
+    List<Instrument> queryInstrument(Instrument instrument);
 
     /**
      * 查询voc数据
@@ -122,5 +122,32 @@ public interface VocRepository {
       * @param sailIds
      * @return java.util.List<com.clear.entity.SailParameter>
      **/
-    List<SailParameter> queryParametersBySailIds(List<Integer> sailIds);
+    List<SailParameter> queryParametersBySailIds(List<Long> sailIds);
+
+    /**
+     * 查询所有的历史走航任务
+     * @author 3Clear1
+     * @date 2020/8/23 12:08
+      * @param 
+     * @return java.util.List<com.clear.entity.Sail>
+     **/
+    List<Sail> querySailAll();
+
+    /**
+     * 根据参数查询走航任务有哪些因子
+     * @author 3Clear1
+     * @date 2020/8/23 12:12
+      * @param sail
+     * @return java.util.List<java.lang.Integer>
+     **/
+    List<Integer> queryParametersByParam(Sail sail);
+
+    /**
+     * 插入到任务配置因子表中
+     * @author 3Clear1
+     * @date 2020/8/23 12:53
+      * @param sailParameter
+     * @return int
+     **/
+    int insertSailParameter(SailParameter sailParameter);
 }

@@ -22,7 +22,7 @@ import java.util.List;
 @AllArgsConstructor
 @Builder
 public class CurTask {
-    private Integer id;
+    private Long id;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime timeS;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

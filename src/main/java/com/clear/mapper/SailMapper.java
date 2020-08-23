@@ -54,7 +54,7 @@ public interface SailMapper extends BaseMapper<Sail> {
      * @author 3Clear1
      * @date 2020/8/17 20:16
      **/
-    Instrument queryInstrument(@Param("item") Instrument instrument);
+    List<Instrument> queryInstrument(@Param("item") Instrument instrument);
 
     /**
      * 查询voc数据
@@ -132,5 +132,23 @@ public interface SailMapper extends BaseMapper<Sail> {
       * @param sailIds
      * @return java.util.List<com.clear.entity.SailParameter>
      **/
-    List<SailParameter> queryParametersBySailIds(@Param("sailIds") List<Integer> sailIds);
+    List<SailParameter> queryParametersBySailIds(@Param("sailIds") List<Long> sailIds);
+
+    /**
+     * 查询所有的历史走航任务
+     * @author 3Clear1
+     * @date 2020/8/23 12:04
+      * @param 
+     * @return java.util.List<com.clear.entity.Sail>
+     **/
+    List<Sail> querySailAll();
+
+    /**
+     * 查询data数据表中有哪些因子
+     * @author 3Clear1
+     * @date 2020/8/23 12:12
+      * @param sail
+     * @return java.util.List<java.lang.Integer>
+     **/
+    List<Integer> queryParametersByParam(@Param("item") Sail sail);
 }

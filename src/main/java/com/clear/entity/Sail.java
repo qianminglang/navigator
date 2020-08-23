@@ -27,7 +27,7 @@ public class Sail implements Serializable {
     /**
      * 走航编号
      */
-    private Integer sailId;
+    private Long sailId;
 
     /**
      * 走航开始时间
@@ -54,11 +54,11 @@ public class Sail implements Serializable {
      */
     private String stationId;
 
-    public Integer getSailId() {
+    public Long getSailId() {
         return sailId;
     }
 
-    public void setSailId(Integer sailId) {
+    public void setSailId(Long sailId) {
         this.sailId = sailId;
     }
     public LocalDateTime getStartTime() {

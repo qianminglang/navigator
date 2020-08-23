@@ -1,7 +1,6 @@
 package com.clear.param.output;
 
 import com.clear.param.output.Param.CurTask;
-import com.clear.param.output.Param.Equ;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -57,6 +56,6 @@ public class SiteOut {
 
     private CurTask curTask;
 
-    private List<Equ> equAry;
+    private List<Integer> equAry;
 
 }

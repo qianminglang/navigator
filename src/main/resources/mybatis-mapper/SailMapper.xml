@@ -54,7 +54,6 @@
                 and model= #{item.model}
             </if>
         </where>
-        limit 1;
     </select>
 
     <select id="querySailStatus" resultType="com.clear.entity.Sail">
@@ -225,7 +224,7 @@
     </select>
 
     <select id="queryParametersBySailIds" resultType="com.clear.entity.SailParameter"
-        parameterType="java.util.List"
+            parameterType="java.util.List"
     >
         select sail_id,parameterid
         from sail_parameter
@@ -235,6 +234,26 @@
                 <foreach collection="sailIds" item="item" index="index" open="(" separator="," close=")">
                     #{item}
                 </foreach>
+            </if>
+        </where>
+    </select>
+
+    <select id="querySailAll" resultType="com.clear.entity.Sail">
+        select sail_id,start_time,start_user_id,end_time,end_user_id,station_id
+        from sail
+    </select>
+
+    <select id="queryParametersByParam" resultType="java.lang.Integer">
+        select distinct parameterid from data
+        <where>
+            <if test="item.stationId!=null and item.stationId!=''">
+                and stationcode = #{item.stationId}
+            </if>
+            <if test="item.startTime!=null">
+                and lst &gt;= #{item.startTime}
+            </if>
+            <if test="item.endTime!=null">
+                and lst &lt;= #{item.endTime}
             </if>
         </where>
     </select>

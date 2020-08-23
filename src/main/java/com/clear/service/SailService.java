@@ -66,4 +66,13 @@ public interface SailService extends IService<Sail> {
      * @date 2020/8/21 18:00
      **/
     OneVocOutInfo queryOneVodData(OneVocParam oneVocParam);
+
+    /**
+     * 生成历史记录的配置信息
+     * @author 3Clear1
+     * @date 2020/8/23 11:59
+      * @param 
+     * @return java.lang.Boolean
+     **/
+    Boolean generateConfigurationInfo();
 }

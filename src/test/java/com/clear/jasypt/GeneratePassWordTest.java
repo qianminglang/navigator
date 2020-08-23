@@ -23,6 +23,7 @@ public class GeneratePassWordTest {
 		boolean xixi = BCrypt.checkpw("sdsd", "$2a$12$b7Pro5EOQXDqjs4w3asuheu0TgYzekBlxdMNzua1hTR5Ka3k78aOu");
 		System.out.println(flag);
 		System.out.println(xixi);
+		Long a=1588754277978l;
 	}
 
 

@@ -21,7 +21,7 @@ import java.util.Date;
 @AllArgsConstructor
 public class VocParam extends RequestParam {
     private String stationCode;
-    private Integer sailId;
+    private Long sailId;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private Date startTime;
 

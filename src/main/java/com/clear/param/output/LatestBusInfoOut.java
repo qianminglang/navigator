@@ -23,7 +23,7 @@ import java.util.List;
 public class LatestBusInfoOut {
     private Long busID;
     private Integer sailing;
-    private Integer taskID;
+    private Long taskID;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
     private LocalDateTime timeS;
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")

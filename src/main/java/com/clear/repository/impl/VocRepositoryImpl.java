@@ -2,6 +2,7 @@ package com.clear.repository.impl;
 
 import com.clear.entity.*;
 import com.clear.mapper.SailMapper;
+import com.clear.mapper.SailParameterMapper;
 import com.clear.param.input.UserIdParam;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
@@ -28,6 +29,9 @@ public class VocRepositoryImpl implements VocRepository {
     @Resource
     private SailMapper sailMapper;
 
+    @Resource
+    private SailParameterMapper sailParameterMapper;
+
     @Override
     public List<String> queryUserSite(UserIdParam userIdParam) {
         return sailMapper.queryUserSite(userIdParam);
@@ -45,7 +49,7 @@ public class VocRepositoryImpl implements VocRepository {
 
 
     @Override
-    public Instrument queryInstrument(Instrument instrument) {
+    public List<Instrument> queryInstrument(Instrument instrument) {
         return sailMapper.queryInstrument(instrument);
     }
 
@@ -80,7 +84,22 @@ public class VocRepositoryImpl implements VocRepository {
     }
 
     @Override
-    public List<SailParameter> queryParametersBySailIds(List<Integer> sailIds) {
+    public List<SailParameter> queryParametersBySailIds(List<Long> sailIds) {
         return sailMapper.queryParametersBySailIds(sailIds);
+    }
+
+    @Override
+    public List<Sail> querySailAll() {
+        return sailMapper.querySailAll();
+    }
+
+    @Override
+    public List<Integer> queryParametersByParam(Sail sail) {
+        return sailMapper.queryParametersByParam(sail);
+    }
+
+    @Override
+    public int insertSailParameter(SailParameter sailParameter) {
+        return sailParameterMapper.insert(sailParameter);
     }
 }

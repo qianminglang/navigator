@@ -99,4 +99,10 @@ public class SailController {
         return Response.SUCCESS(oneVodData);
     }
 
+    @PostMapping("/generateConfigurationInfo")
+    public Response<Boolean> generateConfigurationInfo() {
+        Boolean flag = sailService.generateConfigurationInfo();
+        return Response.SUCCESS(flag);
+    }
+
 }
