@@ -4,6 +4,7 @@ import com.clear.entity.*;
 import com.clear.mapper.SailMapper;
 import com.clear.mapper.SailParameterMapper;
 import com.clear.param.input.UserIdParam;
+import com.clear.param.output.ParameterInfoOut;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
 import com.clear.paramtemp.OneVocParamTemp;
@@ -101,5 +102,15 @@ public class VocRepositoryImpl implements VocRepository {
     @Override
     public int insertSailParameter(SailParameter sailParameter) {
         return sailParameterMapper.insert(sailParameter);
+    }
+
+    @Override
+    public List<Integer> selectInstrumentparameters(int i) {
+        return sailMapper.selectInstrumentparameters(i);
+    }
+
+    @Override
+    public List<ParameterInfoOut> selectParameters(List<Integer> parameters) {
+        return sailMapper.selectParameters(parameters);
     }
 }

@@ -257,4 +257,21 @@
             </if>
         </where>
     </select>
+
+    <select id="selectInstrumentparameters" resultType="java.lang.Integer">
+        select parameterid from instrumentparameters where instrumentid=#{item}
+    </select>
+
+    <select id="selectParameters" resultType="com.clear.param.output.ParameterInfoOut">
+        select parameterid,name from parameter
+        <where>
+            <if test="items!=null and items.size>0">
+                and parameterid in
+                <foreach collection="items" item="item" index="index" open="(" separator="," close=")">
+                    #{item}
+                </foreach>
+            </if>
+        </where>
+        order by parameterid
+    </select>
 </mapper>

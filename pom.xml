@@ -15,7 +15,7 @@
     <description>走航车</description>
 
     <properties>
-        <java.version>11</java.version>
+        <java.version>1.8</java.version>
         <!-- 跳过测试 -->
         <skipTests>true</skipTests>
     </properties>

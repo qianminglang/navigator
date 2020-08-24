@@ -3,6 +3,7 @@ package com.clear.mapper;
 import com.baomidou.mybatisplus.core.mapper.BaseMapper;
 import com.clear.entity.*;
 import com.clear.param.input.UserIdParam;
+import com.clear.param.output.ParameterInfoOut;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
 import com.clear.paramtemp.OneVocParamTemp;
@@ -151,4 +152,22 @@ public interface SailMapper extends BaseMapper<Sail> {
      * @return java.util.List<java.lang.Integer>
      **/
     List<Integer> queryParametersByParam(@Param("item") Sail sail);
+
+    /**
+     * 查询所有设备为8的因子
+     * @author 3Clear1
+     * @date 2020/8/24 18:02
+      * @param i
+     * @return java.util.List<java.lang.String>
+     **/
+    List<Integer> selectInstrumentparameters(@Param("item") int i);
+
+    /**
+     *根据因子id查询因子信息
+     * @author 3Clear1
+     * @date 2020/8/24 18:06
+      * @param parameters
+     * @return java.util.List<com.clear.param.output.ParameterInfoOut>
+     **/
+    List<ParameterInfoOut> selectParameters(@Param("items") List<Integer> parameters);
 }

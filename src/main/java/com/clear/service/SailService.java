@@ -75,4 +75,13 @@ public interface SailService extends IService<Sail> {
      * @return java.lang.Boolean
      **/
     Boolean generateConfigurationInfo();
+
+    /**
+     *
+     * @author 3Clear1
+     * @date 2020/8/24 18:21
+      * @param 
+     * @return java.util.List<com.clear.param.output.ItemInfoOut>
+     **/
+    List<ItemInfoOut> generatorItem();
 }

@@ -2,6 +2,7 @@ package com.clear.repository;
 
 import com.clear.entity.*;
 import com.clear.param.input.UserIdParam;
+import com.clear.param.output.ParameterInfoOut;
 import com.clear.param.output.SiteOut;
 import com.clear.param.output.VocHistoryOut;
 import com.clear.paramtemp.*;
@@ -150,4 +151,22 @@ public interface VocRepository {
      * @return int
      **/
     int insertSailParameter(SailParameter sailParameter);
+
+    /**
+     * 查询设备为8的所有因子
+     * @author 3Clear1
+     * @date 2020/8/24 17:59
+      * @param i
+     * @return java.util.List<java.lang.String>
+     **/
+    List<Integer> selectInstrumentparameters(int i);
+
+    /**
+     * 根据因子id查询因子信息
+     * @author 3Clear1
+     * @date 2020/8/24 18:05
+      * @param parameters
+     * @return java.util.List<com.clear.param.output.ParameterInfoOut>
+     **/
+    List<ParameterInfoOut> selectParameters(List<Integer> parameters);
 }

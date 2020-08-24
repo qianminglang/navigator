@@ -87,7 +87,6 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         });
 
 
-
         //查询走航车的状态，取每个走航车最新的状态
         List<Sail> siteStatus = vocRepository.querySailStatus(stationCodeS);
 
@@ -129,7 +128,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                         .build();
                 List<Instrument> vocInstrumentOutPuts = getInstrument(vocInstrument);
                 if (CollectionUtils.isNotEmpty(vocInstrumentOutPuts)) {
-                    instrumentids=vocInstrumentOutPuts.stream().map(Instrument::getInstrumentid).collect(Collectors.toList());
+                    instrumentids = vocInstrumentOutPuts.stream().map(Instrument::getInstrumentid).collect(Collectors.toList());
                 }
 
                 siteOut.setStartTime(startTime);
@@ -371,7 +370,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
     /**
      * 封装从data表中查询出来的数据
      *
-     * @param parameters
+     * @param parameterList
      * @param groupData
      * @param lonLatList
      * @param pvbList
@@ -515,7 +514,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             //将sail_parameter表中以逗号分隔的因子转换成因子数组
             Map<Long, List<Integer>> sailIdParameterMap = new HashMap<>();
             for (SailParameter e : sailParameters) {
-                List<String> strings = Arrays.asList(Optional.ofNullable(e.getParameterid()).orElse(null).split(",")).stream().filter(item->Objects.nonNull(item)).collect(Collectors.toList());
+                List<String> strings = Arrays.asList(Optional.ofNullable(e.getParameterid()).orElse(null).split(",")).stream().filter(item -> Objects.nonNull(item)).collect(Collectors.toList());
                 List<Integer> integerList = Collections.EMPTY_LIST;
                 if (CollectionUtils.isNotEmpty(strings)) {
                     integerList = strings.stream().map(item -> Integer.valueOf(item)).collect(Collectors.toList());
@@ -687,6 +686,165 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
             int count = vocRepository.insertSailParameter(sailParameter);
         }
         return true;
+    }
+
+    @Override
+    public List<ItemInfoOut> generatorItem() {
+        //查询设置为8的所有因子
+        List<Integer> parameters = vocRepository.selectInstrumentparameters(8);
+
+        if (CollectionUtils.isEmpty(parameters)) {
+            return Collections.emptyList();
+        }
+
+        //查询因子的所有名称
+        List<ParameterInfoOut> parameterInfos = vocRepository.selectParameters(parameters);
+        if (CollectionUtils.isEmpty(parameterInfos)) {
+            return Collections.emptyList();
+        }
+
+        LinkedList<ItemInfoOut> result = new LinkedList<>();
+        for (ParameterInfoOut parameterInfo : parameterInfos) {
+            ItemInfoOut infoOut = ItemInfoOut.builder()
+                    .id(parameterInfo.getParameterid())
+                    .name(parameterInfo.getName())
+                    .show(1)
+                    .min(0)
+                    .max(50)
+                    .maxug(1000)
+                    .td(30)
+                    .tdug(500)
+                    .scale(1000)
+                    .scaleug(10)
+                    .index(0)
+                    .values(Arrays.asList(5, 10, 50))
+                    .valuesug(Arrays.asList(200, 600, 1000))
+                    .industry(Arrays.asList("行业1", "行业2"))
+                    .build();
+            result.add(infoOut);
+        }
+//        衍生数据类型：0-最大voc、1-TVOC、2-最大OFP、3-最大SOAP、4-OFP、5-SOAP、6-OFP总和、7-SOAP总和
+        ItemInfoOut zdvoc = ItemInfoOut.builder()
+                .id(0)
+                .name("最大voc")
+                .show(1)
+                .min(0)
+                .max(50)
+                .maxug(1000)
+                .td(30)
+                .tdug(500)
+                .scale(1000)
+                .scaleug(10)
+                .index(0)
+                .values(Arrays.asList(5, 10, 50))
+                .valuesug(Arrays.asList(200, 600, 1000))
+                .industry(Arrays.asList("行业1", "行业2"))
+                .build();
+        ItemInfoOut TVOC = ItemInfoOut.builder()
+                .id(1)
+                .name("TVOC")
+                .show(1)
+                .min(0)
+                .max(50)
+                .maxug(1000)
+                .td(30)
+                .tdug(500)
+                .scale(1000)
+                .scaleug(10)
+                .index(0)
+                .values(Arrays.asList(5, 10, 50))
+                .valuesug(Arrays.asList(200, 600, 1000))
+                .industry(Arrays.asList("行业1", "行业2"))
+                .build();
+        ItemInfoOut zdofp = ItemInfoOut.builder()
+                .id(2)
+                .name("最大OFP")
+                .show(1)
+                .min(0)
+                .max(50)
+                .maxug(1000)
+                .td(30)
+                .tdug(500)
+                .scale(1000)
+                .scaleug(10)
+                .index(0)
+                .values(Arrays.asList(5, 10, 50))
+                .valuesug(Arrays.asList(200, 600, 1000))
+                .industry(Arrays.asList("行业1", "行业2"))
+                .build();
+        ItemInfoOut OFP = ItemInfoOut.builder()
+                .id(4)
+                .name("OFP")
+                .show(1)
+                .min(0)
+                .max(50)
+                .maxug(1000)
+                .td(30)
+                .tdug(500)
+                .scale(1000)
+                .scaleug(10)
+                .index(0)
+                .values(Arrays.asList(5, 10, 50))
+                .valuesug(Arrays.asList(200, 600, 1000))
+                .industry(Arrays.asList("行业1", "行业2"))
+                .build();
+        ItemInfoOut SOAP = ItemInfoOut.builder()
+                .id(5)
+                .name("SOAP")
+                .show(1)
+                .min(0)
+                .max(50)
+                .maxug(1000)
+                .td(30)
+                .tdug(500)
+                .scale(1000)
+                .scaleug(10)
+                .index(0)
+                .values(Arrays.asList(5, 10, 50))
+                .valuesug(Arrays.asList(200, 600, 1000))
+                .industry(Arrays.asList("行业1", "行业2"))
+                .build();
+        ItemInfoOut ofpzh = ItemInfoOut.builder()
+                .id(6)
+                .name("OFP总和")
+                .show(1)
+                .min(0)
+                .max(50)
+                .maxug(1000)
+                .td(30)
+                .tdug(500)
+                .scale(1000)
+                .scaleug(10)
+                .index(0)
+                .values(Arrays.asList(5, 10, 50))
+                .valuesug(Arrays.asList(200, 600, 1000))
+                .industry(Arrays.asList("行业1", "行业2"))
+                .build();
+        ItemInfoOut soapzh = ItemInfoOut.builder()
+                .id(7)
+                .name("SOAP总和")
+                .show(1)
+                .min(0)
+                .max(50)
+                .maxug(1000)
+                .td(30)
+                .tdug(500)
+                .scale(1000)
+                .scaleug(10)
+                .index(0)
+                .values(Arrays.asList(5, 10, 50))
+                .valuesug(Arrays.asList(200, 600, 1000))
+                .industry(Arrays.asList("行业1", "行业2"))
+                .build();
+        result.add(zdvoc);
+        result.add(TVOC);
+        result.add(zdofp);
+        result.add(OFP);
+        result.add(SOAP);
+        result.add(ofpzh);
+        result.add(soapzh);
+
+        return result;
     }
 
     /**
