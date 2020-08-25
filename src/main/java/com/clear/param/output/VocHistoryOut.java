@@ -7,6 +7,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
 
@@ -21,7 +22,9 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @ApiModel
-public class VocHistoryOut {
+public class VocHistoryOut implements Serializable {
+
+    private static final long serialVersionUID = -8988928917023431290L;
 
     @ApiModelProperty(value = "任务id")
     private Long taskId;
@@ -38,7 +41,7 @@ public class VocHistoryOut {
 
     @ApiModelProperty(value = "任务结束时间")
     @JsonFormat(pattern = "yyyy-MM-dd HH:mm:ss", timezone = "GMT+8")
-    private String timeE;
+    private Date timeE;
 
 
     @ApiModelProperty(value = "结束用户id")
