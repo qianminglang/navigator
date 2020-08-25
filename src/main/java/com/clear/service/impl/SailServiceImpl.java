@@ -280,6 +280,7 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         List<List<Float>> dataAryUgm3 = new LinkedList<>();
         List<List<Float>> dataAryZhenDuan = new LinkedList<>();
 
+
         dateTimeListMap = sortByKey(dateTimeListMap, false);
         for (Map.Entry<Long, List<Data>> longListEntry : dateTimeListMap.entrySet()) {
             Long time = longListEntry.getKey();
