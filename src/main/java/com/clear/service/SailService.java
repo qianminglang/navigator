@@ -84,4 +84,6 @@ public interface SailService extends IService<Sail> {
      * @return java.util.List<com.clear.param.output.ItemInfoOut>
      **/
     List<ItemInfoOut> generatorItem();
+
+    void generatorWind(WindInfo windInfo);
 }

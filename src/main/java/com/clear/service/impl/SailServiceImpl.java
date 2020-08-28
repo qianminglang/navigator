@@ -4,6 +4,7 @@ import com.baomidou.mybatisplus.core.toolkit.CollectionUtils;
 import com.baomidou.mybatisplus.extension.service.impl.ServiceImpl;
 import com.clear.consts.Constants;
 import com.clear.converter.input.SailInfoConverter;
+import com.clear.entity.Data;
 import com.clear.entity.*;
 import com.clear.exception.ClearArgumentException;
 import com.clear.mapper.SailMapper;
@@ -718,8 +719,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                     .scale(1000)
                     .scaleug(10)
                     .index(0)
-                    .values(Arrays.asList(5, 10, 50))
-                    .valuesug(Arrays.asList(200, 600, 1000))
+                    .values(Arrays.asList(0, 20, 40, 60, 80, 100))
+                    .valuesug(Arrays.asList(0, 200, 400, 600, 800, 1000))
                     .industry(Arrays.asList("行业1", "行业2"))
                     .build();
             result.add(infoOut);
@@ -737,8 +738,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .scale(1000)
                 .scaleug(10)
                 .index(0)
-                .values(Arrays.asList(5, 10, 50))
-                .valuesug(Arrays.asList(200, 600, 1000))
+                .values(Arrays.asList(0, 20, 40, 60, 80, 100))
+                .valuesug(Arrays.asList(0, 200, 400, 600, 800, 1000))
                 .industry(Arrays.asList("行业1", "行业2"))
                 .build();
         ItemInfoOut TVOC = ItemInfoOut.builder()
@@ -753,8 +754,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .scale(1000)
                 .scaleug(10)
                 .index(0)
-                .values(Arrays.asList(5, 10, 50))
-                .valuesug(Arrays.asList(200, 600, 1000))
+                .values(Arrays.asList(0, 20, 40, 60, 80, 100))
+                .valuesug(Arrays.asList(0, 200, 400, 600, 800, 1000))
                 .industry(Arrays.asList("行业1", "行业2"))
                 .build();
         ItemInfoOut zdofp = ItemInfoOut.builder()
@@ -769,8 +770,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .scale(1000)
                 .scaleug(10)
                 .index(0)
-                .values(Arrays.asList(5, 10, 50))
-                .valuesug(Arrays.asList(200, 600, 1000))
+                .values(Arrays.asList(0, 20, 40, 60, 80, 100))
+                .valuesug(Arrays.asList(0, 200, 400, 600, 800, 1000))
                 .industry(Arrays.asList("行业1", "行业2"))
                 .build();
         ItemInfoOut OFP = ItemInfoOut.builder()
@@ -785,8 +786,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .scale(1000)
                 .scaleug(10)
                 .index(0)
-                .values(Arrays.asList(5, 10, 50))
-                .valuesug(Arrays.asList(200, 600, 1000))
+                .values(Arrays.asList(0, 20, 40, 60, 80, 100))
+                .valuesug(Arrays.asList(0, 200, 400, 600, 800, 1000))
                 .industry(Arrays.asList("行业1", "行业2"))
                 .build();
         ItemInfoOut SOAP = ItemInfoOut.builder()
@@ -801,8 +802,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .scale(1000)
                 .scaleug(10)
                 .index(0)
-                .values(Arrays.asList(5, 10, 50))
-                .valuesug(Arrays.asList(200, 600, 1000))
+                .values(Arrays.asList(0, 20, 40, 60, 80, 100))
+                .valuesug(Arrays.asList(0, 200, 400, 600, 800, 1000))
                 .industry(Arrays.asList("行业1", "行业2"))
                 .build();
         ItemInfoOut ofpzh = ItemInfoOut.builder()
@@ -817,8 +818,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .scale(1000)
                 .scaleug(10)
                 .index(0)
-                .values(Arrays.asList(5, 10, 50))
-                .valuesug(Arrays.asList(200, 600, 1000))
+                .values(Arrays.asList(0, 20, 40, 60, 80, 100))
+                .valuesug(Arrays.asList(0, 200, 400, 600, 800, 1000))
                 .industry(Arrays.asList("行业1", "行业2"))
                 .build();
         ItemInfoOut soapzh = ItemInfoOut.builder()
@@ -833,8 +834,8 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
                 .scale(1000)
                 .scaleug(10)
                 .index(0)
-                .values(Arrays.asList(5, 10, 50))
-                .valuesug(Arrays.asList(200, 600, 1000))
+                .values(Arrays.asList(0, 20, 40, 60, 80, 100))
+                .valuesug(Arrays.asList(0, 200, 400, 600, 800, 1000))
                 .industry(Arrays.asList("行业1", "行业2"))
                 .build();
         result.add(zdvoc);
@@ -846,6 +847,30 @@ public class SailServiceImpl extends ServiceImpl<SailMapper, Sail> implements Sa
         result.add(soapzh);
 
         return result;
+    }
+
+    @Override
+    public void generatorWind(WindInfo windInfo) {
+        Head header = windInfo.getHeader();
+        Integer nx = header.getNx();
+        Integer ny = header.getNy();
+        //定义一个二维数组
+        Float[][] uGrid = new Float[nx][ny];
+        Float[][] vGrid = new Float[nx][ny];
+        com.clear.param.input.Data data = windInfo.getData();
+
+
+        List<Float> uComp = data.getOne();
+        List<Float> vComp = data.getTwo();
+
+        for (int i = 0; i < ny; i++) {
+            for (int j = 0; j < nx; j++) {
+                uGrid[i][j] = uComp.get(i * nx + j);
+                vGrid[i][j]  = vComp.get(i * nx + j);
+            }
+        }
+        System.out.println(uGrid.toString());
+        System.out.println(vGrid.toString());
     }
 
     /**

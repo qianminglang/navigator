@@ -5,6 +5,7 @@ import com.baomidou.mybatisplus.core.metadata.IPage;
 import com.clear.entity.InformationTable;
 import com.clear.param.Response;
 import com.clear.param.input.UserInfoParam;
+import com.clear.param.input.WindInfo;
 import com.clear.param.output.ItemInfoOut;
 import com.clear.service.InformationTableService;
 import com.clear.service.SailService;
@@ -43,10 +44,19 @@ public class InformationTableController {
         return new Response<>(informationTableService.selectUserInfoByPage(userInfoParam));
     }
 
+    //TODO 注意0-7的id被衍生数值占用了，不能设为因子的id
     @ApiOperation("生成item.json")
     @PostMapping("/generatorItem")
     public Response<List<ItemInfoOut>> generatorItem() {
         List<ItemInfoOut> itemInfoOuts = sailService.generatorItem();
         return Response.SUCCESS(itemInfoOuts);
+    }
+
+    @ApiOperation("生成item.json")
+    @PostMapping("/generatorWind")
+    public Response<List<ItemInfoOut>> generatorWind(@RequestBody WindInfo windInfo) {
+        System.out.println(windInfo);
+        sailService.generatorWind(windInfo);
+        return Response.SUCCESS(null);
     }
 }
