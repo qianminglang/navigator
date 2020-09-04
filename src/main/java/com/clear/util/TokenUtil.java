@@ -19,7 +19,7 @@ import java.util.Date;
  **/
 
 public class TokenUtil {
-    //token到期时间10小时
+    //token到期时间12小时
     private static final long EXPIRE_TIME= 12*60*60*1000;
     //密钥盐
     private static final String TOKEN_SECRET="ljdyaishijin**3nkjnj??";
